@@ -1,0 +1,36 @@
+package Recursion;
+
+public class ReverseString {
+    public static void usingSwap(char[] ch, int i){
+        if(i >= ch.length/2){
+            return;
+        }
+
+        char temp = ch[i];
+        ch[i] = ch[ch.length - 1 - i];
+        ch[ch.length - 1 - i] = temp;
+
+        usingSwap(ch, i+1);
+    }
+
+    public static String withoutSwap(String str, int i, StringBuilder sb){
+        if(i < 0){
+            return sb.toString();
+        }
+
+        sb.append(str.charAt(i));
+        return withoutSwap(str, i-1, sb);
+    }
+
+    public static void main(String[] args) {
+        String str = "VyakhyaNamdev";
+        char[] charArr = str.toCharArray();
+        usingSwap(charArr, 0);
+        String reversedStr = new String(charArr);
+        System.out.println("Reversed String using swapping: " + reversedStr);
+
+        String s = "AnshulNamdev";
+        String res = withoutSwap(s, s.length()-1, new StringBuilder());
+        System.out.println("Reversed String without using swap: " + res);
+    }
+}
