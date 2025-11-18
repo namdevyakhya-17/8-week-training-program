@@ -1,0 +1,21 @@
+package Recursion;
+
+public class CountVowel {
+    public static int countV(String str, int idx){
+        if(idx == str.length()){
+            return 0;
+        }
+
+        char ch = Character.toLowerCase(str.charAt(idx));
+        if(ch == 'a' || ch == 'e' || ch =='i' || ch == 'o' || ch == 'u'){
+            return 1 + countV(str, idx+1);
+        }else{
+            return countV(str, idx+1);
+        }
+    }
+    public static void main(String[] args) {
+        String str = "Recursion is fun";
+        int count = countV(str,0);
+        System.out.println("Total number of vowes: " + count);
+    }
+}
