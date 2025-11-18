@@ -1,0 +1,32 @@
+package Recursion;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class SortArray{
+    public static void sort(ArrayList<Integer> arr){
+        if(arr.size() == 1){
+            return;
+        }
+
+        int lastElement = arr.remove(arr.size() - 1);
+        sort(arr);
+        insert(arr, lastElement);
+    }
+
+    public static void insert(ArrayList<Integer> arr, int value){
+        if(arr.size() == 0 || arr.get(arr.size()-1) <= value){
+            arr.add(value);
+            return;
+        }
+
+        int lastElement = arr.remove(arr.size()-1);
+        insert(arr, value);
+        arr.add(lastElement);
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> arr = new ArrayList<>(Arrays.asList(5, 3, 8, 1, 2));
+        sort(arr);
+        System.out.println(arr);
+    }
+}
