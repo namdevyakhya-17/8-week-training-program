@@ -1,0 +1,22 @@
+class Solution {
+    public double myPow(double x, int n) {
+        long N = n;
+
+        if(N < 0){
+            x = 1/x;
+            N = -N;
+        }
+        return findPow(x,N);        
+    }
+
+    public double findPow(double x, long N){
+        if(N == 0) return 1;
+
+        double res = findPow(x, N/2);
+        if(N % 2 == 0){
+            return res*res;
+        }else{
+            return res*res*x;
+        }
+    }
+}
