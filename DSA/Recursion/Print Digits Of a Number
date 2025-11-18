@@ -1,0 +1,18 @@
+package Recursion;
+
+public class PrintDigit {
+    public static void printDigits(int n){
+        if(n < 10){
+            System.out.print(n);
+            return;
+        }
+
+        int rem = n%10;
+        printDigits(n/10);
+        System.out.print(" " + rem);
+    }
+    public static void main(String[] args) {
+        int n = 12345;
+        printDigits(n);
+    }
+}
