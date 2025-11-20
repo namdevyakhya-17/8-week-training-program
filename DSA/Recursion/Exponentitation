@@ -1,0 +1,27 @@
+import java.util.Scanner;
+ 
+public class Exponentitation{
+    static int mod = 1000000007;
+    public static long pow(long a, long b){
+        if(b == 0) return 1;
+        if(a == 0) return 0;
+ 
+        long res = pow(a, b/2);
+        long half = (res*res) % mod;
+        if(b%2 == 0){
+            return half;
+        }else{
+            return (half * (a%mod)) % mod;
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        long n = sc.nextLong();
+        for(long i=0; i<n; i++){
+            long a = sc.nextLong();
+            long b = sc.nextLong();
+            System.out.println(pow(a, b));
+        }
+        sc.close();
+    }
+}
