@@ -1,0 +1,20 @@
+class Solution {
+    public void help(String s, int i, List<String> a, StringBuilder str){
+        if(i == s.length()){
+            if(str.length() > 0) a.add(str.toString());
+            return;
+        }
+        
+        help(s, i+1, a, str);   // not take
+        
+        str.append(s.charAt(i)); 
+        help(s, i+1, a, str);   // take
+        str.deleteCharAt(str.length()-1);
+    }
+    public List<String> AllPossibleStrings(String s) {
+        List<String> a = new ArrayList<>();
+        help(s,0,a, new StringBuilder());
+        Collections.sort(a);
+        return a;
+    }
+}
