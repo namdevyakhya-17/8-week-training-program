@@ -1,0 +1,17 @@
+class Solution {
+    ListNode left;
+    
+    public boolean isPalindrome(ListNode head) {
+        left = head;
+        return checkPalindrome(head);
+    }
+
+    public boolean checkPalindrome(ListNode right){
+        if(right  == null) return true;
+        boolean res = checkPalindrome(right.next);
+        if (!res) return false;
+        if(left.val != right.val) return false;
+        left = left.next;
+        return true;
+    }
+}
