@@ -1,6 +1,23 @@
+// Method 1
 class Solution {
     public static int gcd(int a, int b) {
         if(b == 0) return a;
         return gcd(b, a%b);
+    }
+}
+
+
+// Method 2
+class Main {
+    public static void main(String[] args) {
+        int a = 6;
+        int b = 4;
+        while(a%b != 0){
+            int rem = a%b;
+            a = b;
+            b = rem;
+        }
+        
+        System.out.println(b);
     }
 }
