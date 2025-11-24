@@ -1,0 +1,16 @@
+class Solution {
+    public int helper(int head, int remain, boolean turn, int step){
+        if(remain == 1) return head;
+
+        if(turn == true || remain%2 != 0){
+            head = head + step;
+        }
+        remain = remain/2;
+        step = step*2;
+
+        return helper(head,remain,!turn,step);
+    }
+    public int lastRemaining(int n) {
+        return helper(1,n,true,1);  // left = true initially
+    }
+}
