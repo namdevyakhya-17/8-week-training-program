@@ -1,0 +1,18 @@
+import java.util.*;
+class Main {
+    public static void help(int i, int j, int m, int n, String str){
+        if(i > m || j >n) return;
+        if(i == m-1 && j == m-1){
+            System.out.println(str);
+            return;
+        }
+        help(i+1,j,m,n,str+'D');
+        help(i,j+1,m,n,str+'R');
+        
+    }
+    public static void main(String[] args) {
+        int m = 3;
+        int n = 7;
+        help(0,0,m,n,"");
+    }
+}
