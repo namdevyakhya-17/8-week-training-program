@@ -1,0 +1,12 @@
+class Solution {
+    public int towerOfHanoi(int n, int from, int to, int aux) {
+        if(n == 0) return 0;
+        int step = 0;
+        
+        step += towerOfHanoi(n-1, from, aux, to);
+        step++;
+        step += towerOfHanoi(n-1, aux, from, to);
+        
+        return step;
+    }
+}
