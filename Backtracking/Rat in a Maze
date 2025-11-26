@@ -1,0 +1,35 @@
+class Solution {
+    public void findPath(int[][] maze,int i, int j, int m, int n, StringBuilder str, ArrayList<String> res){
+        if(i < 0 || i>=m || j<0 || j>=n || maze[i][j] == 0) return;
+        if(i == m-1 && j == n-1){
+            res.add(str.toString());
+            return;
+        }
+        
+        maze[i][j]=0;
+        str.append('D');
+        findPath(maze, i + 1, j, m, n, str, res);
+        str.deleteCharAt(str.length() - 1);
+
+        str.append('L');
+        findPath(maze, i, j - 1, m, n, str, res);
+        str.deleteCharAt(str.length() - 1);
+
+        str.append('R');
+        findPath(maze, i, j + 1, m, n, str, res);
+        str.deleteCharAt(str.length() - 1);
+
+        str.append('U');
+        findPath(maze, i - 1, j, m, n, str, res);
+        str.deleteCharAt(str.length() - 1);
+        maze[i][j]=1;
+        
+    }
+    public ArrayList<String> ratInMaze(int[][] maze) {
+        ArrayList<String> res = new ArrayList<>();
+        int m = maze.length;
+        int n = maze[0].length;
+        findPath(maze,0,0,m,n,new StringBuilder(),res);
+        return res;
+    }
+}
