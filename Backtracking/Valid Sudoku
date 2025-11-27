@@ -1,0 +1,44 @@
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        int n = 9;
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(board[i][j] != '.'){
+                    char ch = board[i][j];
+                    board[i][j] = '.';
+                    if(!isSafe(board,i,j,(ch-'0'))){
+                        return false;
+                    }
+                    board[i][j] = ch;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isSafe(char[][] board, int row, int col, int val){
+        // horizontally
+        for(int i=0; i<9; i++){
+            int ch = board[row][i]-'0';
+            if(ch == val) return false;
+        }
+
+        // vertically
+        for(int j=0; j<9; j++){
+            int ch = board[j][col]-'0';
+            if(ch == val) return false;
+        }
+
+        // 3x3 box
+        int stR = (row/3)*3;
+        int stC = (col/3)*3;
+        for(int i=stR; i<stR+3; i++){
+            for(int j=stC; j<stC+3; j++){
+                if(i==row && j==col) continue;
+                int ch = board[i][j]-'0';
+                if(ch == val) return false;
+            }
+        }
+        return true;
+    }
+}
