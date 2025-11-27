@@ -1,0 +1,52 @@
+class Solution {
+    public boolean isSafe(char[][] board, int row, int col, int val){
+        // horizontally
+        for(int i=0; i<9; i++){
+            int ch = board[row][i]-'0';
+            if(ch == val) return false;
+        }
+
+        // vertically
+        for(int j=0; j<9; j++){
+            int ch = board[j][col]-'0';
+            if(ch == val) return false;
+        }
+
+        // 3x3 box
+        int stR = (row/3)*3;
+        int stC = (col/3)*3;
+        for(int i=stR; i<stR+3; i++){
+            for(int j=stC; j<stC+3; j++){
+                if(i==row && j==col) continue;
+                int ch = board[i][j]-'0';
+                if(ch == val) return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean solve(char[][] board, int row, int col){
+        if(row == 9) return true;
+
+        int nextR = row;
+        int nextC = col+1;
+        if(nextC == 9){
+            nextR++;
+            nextC=0;
+        }
+
+        if(board[row][col] != '.') return solve(board,nextR,nextC);
+        for(int i=1; i<10; i++){
+            if(isSafe(board,row,col,i)){
+                board[row][col] = (char)(i+'0');                
+                if(solve(board, nextR,nextC)) return true;
+                board[row][col] = '.';
+            }
+        }
+
+        return false;
+    }
+    public void solveSudoku(char[][] board) {
+        solve(board,0,0);
+    }
+}
