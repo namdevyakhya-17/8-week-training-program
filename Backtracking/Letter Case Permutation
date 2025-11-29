@@ -1,0 +1,26 @@
+class Solution {
+    public void solve(StringBuilder s, List<String> res, int i){
+        if(i == s.length()){
+            res.add(s.toString());
+            return;
+        }
+        
+        solve(s,res,i+1);
+        if(Character.isAlphabetic(s.charAt(i))){
+            char ch = s.charAt(i);
+            if(Character.isLowerCase(s.charAt(i))){
+                s.setCharAt(i, Character.toUpperCase(ch));
+            }else{
+                s.setCharAt(i, Character.toLowerCase(ch));
+            }
+            solve(s,res,i+1);
+            s.setCharAt(i, ch);
+        } 
+    }
+
+    public List<String> letterCasePermutation(String s) {
+        List<String> res = new ArrayList<>();
+        solve(new StringBuilder(s),res,0);
+        return res;
+    }
+}
