@@ -1,0 +1,39 @@
+class Solution {
+    int count = 0;
+
+    public boolean allReached(int[][] grid){
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j<grid[0].length; j++){
+                if(grid[i][j] == 0) return false;
+            }
+        }
+        return true;
+    }
+    public void findPath(int[][] grid, int row, int col, int m, int n){
+        if(row < 0 || col < 0 || row >= m || col >= n || grid[row][col] == -1) return;
+        if(grid[row][col] == 2){
+            if(allReached(grid)) count++;
+            return;
+        }
+
+        int temp = grid[row][col];
+        grid[row][col] = -1;
+        findPath(grid, row+1, col, m, n);
+        findPath(grid, row-1, col, m, n);
+        findPath(grid, row, col-1, m, n);
+        findPath(grid, row, col+1, m, n);
+        grid[row][col] = temp;
+
+    }
+    public int uniquePathsIII(int[][] grid) {
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j<grid[0].length; j++){
+                if(grid[i][j] == 1){
+                    findPath(grid, i, j, grid.length, grid[0].length);
+                    return count;
+                }
+            }
+        }  
+        return 0;  
+    }
+}
