@@ -1,0 +1,23 @@
+# Method 1
+
+class Solution {
+    public int solve(List<List<Integer>> triangle, int[][] dp, int row, int col) {
+        if (row == triangle.size() - 1) return triangle.get(row).get(col);
+
+        if (dp[row][col] != Integer.MAX_VALUE) return dp[row][col];
+
+        int down = solve(triangle, dp, row + 1, col);
+        int diag = solve(triangle, dp, row + 1, col + 1);
+
+        return dp[row][col] = triangle.get(row).get(col) + Math.min(down, diag);
+    }
+
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int n = triangle.size();
+        int[][] dp = new int[n][n];
+
+        for (int[] arr : dp) Arrays.fill(arr, Integer.MAX_VALUE);
+
+        return solve(triangle, dp, 0, 0);
+    }
+}
