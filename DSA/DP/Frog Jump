@@ -1,0 +1,32 @@
+class Solution {
+    HashMap<Integer, Integer> map = new HashMap<>();
+    HashSet<String> visited= new HashSet<>();
+
+    public boolean solve(int[] stones, int cur_idx, int preJump){
+        if(cur_idx == stones.length-1) return true;
+
+        String jump = cur_idx+ "-" + preJump;
+        if(visited.contains(jump)) return false;
+        visited.add(jump);
+
+        boolean result = false;
+        for(int nextJump = preJump-1; nextJump <= preJump+1; nextJump++){
+            if(nextJump > 0){
+                int nextStone = stones[cur_idx] + nextJump;
+                if(map.containsKey(nextStone)){
+                    result = result || solve(stones, map.get(nextStone), nextJump);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public boolean canCross(int[] stones) {
+        for(int i=0; i<stones.length; i++){
+            map.put(stones[i], i);
+        }
+
+        return solve(stones,0,0);
+    }
+}
