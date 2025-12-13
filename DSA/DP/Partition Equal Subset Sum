@@ -1,3 +1,4 @@
+### TABULATION ###
 class Solution {
     static boolean equalPartition(int arr[]) {
         int sum = 0;
@@ -28,5 +29,39 @@ class Solution {
         }
         
         return dp[arr.length][target];
+    }
+}
+
+
+
+### MEMOIZATION ###
+class Solution {
+    static boolean isEqual(int[] arr, int target, int i, boolean[][] dp){
+        if(target == 0) return true;
+        if(i == arr.length || target < 0) return false;
+        
+        if(dp[i][target]) return dp[i][target];
+        
+        boolean take = isEqual(arr, target-arr[i], i+1, dp);
+        boolean notTake = isEqual(arr, target, i+1, dp);
+        
+        return dp[i][target] = take || notTake;
+    }
+    static boolean equalPartition(int arr[]) {
+        int sum = 0;
+        for(int num: arr){
+            sum += num;
+        }
+        
+        if(sum % 2 != 0) return false;
+        
+        int target = sum/2;
+        
+        boolean[][] dp = new boolean[arr.length+1][target+1];
+        for(boolean[] dps: dp){
+            Arrays.fill(dps, false);
+        }
+        
+        return isEqual(arr, target, 0, dp);
     }
 }
