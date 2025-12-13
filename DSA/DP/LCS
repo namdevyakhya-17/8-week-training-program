@@ -1,0 +1,55 @@
+### MEMOIZATION ###
+class Solution {
+    static int solve(String s1, String s2, int[][] dp){
+        if(s1.length() == 0 || s2.length() == 0) return 0;
+        
+        if(dp[s1.length()-1][s2.length()-1] != -1) return dp[s1.length()-1][s2.length()-1];
+        if(s1.charAt(s1.length()-1) == s2.charAt(s2.length()-1)){
+            return dp[s1.length()-1][s2.length()-1] = 1 + solve(
+                    s1.substring(0, s1.length() - 1),
+                    s2.substring(0, s2.length() - 1), dp
+            );
+        }else{
+            return dp[s1.length()-1][s2.length()-1] = Math.max(solve(s1.substring(0, s1.length()-1), s2, dp), 
+                            solve(s1,s2.substring(0,s2.length()-1), dp));
+        }
+    }
+    static int lcs(String s1, String s2) {
+        int n1 = s1.length();
+        int n2 = s2.length();
+        int[][] dp = new int[n1+1][n2+1];
+        
+        for(int[] dps : dp){
+            Arrays.fill(dps,-1);
+        }
+        
+        return solve(s1,s2,dp);
+    }
+}
+
+### TABULATION ###
+class Solution {
+    static int lcs(String s1, String s2) {
+        int n1 = s1.length();
+        int n2 = s2.length();
+        int[][] dp = new int[n1+1][n2+1];
+        
+        for(int i = 0; i <= n1; i++)
+            dp[i][0] = 0;
+        
+        for(int j = 0; j <= n2; j++)
+            dp[0][j] = 0;
+        
+        for(int i=1; i<=n1; i++){
+            for(int j=1; j<=n2; j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    dp[i][j] = 1+dp[i-1][j-1];
+                }else{
+                    dp[i][j] = Math.max(dp[i][j-1], dp[i-1][j]);
+                }
+            }
+        }
+        
+        return dp[n1][n2];
+    }
+}
