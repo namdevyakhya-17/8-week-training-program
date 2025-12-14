@@ -1,0 +1,38 @@
+### MEMOIZATION ###
+class Solution {
+    static int findCost(int[] cost, int i, int[] dp){
+        if(i >= cost.length) return 0;
+        if(dp[i] != -1) return dp[i];
+        
+        int step1 = findCost(cost, i+1, dp);
+        int step2 = findCost(cost, i+2, dp);
+        int res = cost[i] + Math.min(step1, step2);
+        
+        return dp[i] = res;
+    }
+    static int minCostClimbingStairs(int[] cost) {
+        int n = cost.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, -1);
+        return Math.min(findCost(cost, 0, dp), findCost(cost, 1, dp));
+    }
+};
+
+### TABULATION ###
+//Back-end complete function Template for Java
+
+class Solution {
+    static int minCostClimbingStairs(int[] cost) {
+        int n = cost.length;
+        int[] dp = new int[n+1];
+        dp[n] = 0;
+        
+        for(int i= n-1; i>=0; i--){
+            int step1 = dp[i+1];
+            int step2 = i+2 < n ? dp[i+2] : 0;
+            dp[i] = cost[i] + Math.min(step1, step2);
+        }
+        
+        return Math.min(dp[0], dp[1]);
+    }
+};
