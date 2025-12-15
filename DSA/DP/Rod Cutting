@@ -52,3 +52,33 @@ class Solution {
         return solve(price, n-1, len, dp);
     }
 }
+
+
+## SPACE OPTIMISATION ##
+class Solution {
+    public int cutRod(int[] price) {
+        int n = price.length;
+        int len = price.length;
+        int[] prev = new int[len+1];
+        int[] cur = new int[len+1];
+        
+        // using only first rod length (length 1)
+        for(int i=0; i<=len; i++){
+            prev[i] = price[0]*i;
+        }
+        
+        for(int i=1; i<n; i++){
+            for(int j=0; j<=len; j++){
+                if(i+1 <= j){
+                    cur[j] = Math.max(prev[j], price[i] + cur[j-(i+1)]);
+                }else{
+                    cur[j] = prev[j];
+                }
+            }
+            
+            prev = cur;
+        }
+        
+        return prev[n];
+    }
+}
