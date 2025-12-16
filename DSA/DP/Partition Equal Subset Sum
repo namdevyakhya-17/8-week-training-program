@@ -1,67 +1,111 @@
-### TABULATION ###
+## RECURSION ##
 class Solution {
-    static boolean equalPartition(int arr[]) {
+    public boolean isValid(int[] nums, int target, int idx){
+        if(target == 0) return true;
+        if(idx == nums.length || target < 0) return false;
+
+        boolean include = isValid(nums, target-nums[idx],idx+1);
+        boolean exclude = isValid(nums, target, idx+1);
+
+        return include || exclude;
+    }
+    public boolean canPartition(int[] nums) {
         int sum = 0;
-        for(int num: arr){
+        for(int num: nums){
             sum += num;
         }
-        
-        if(sum % 2 != 0) return false;
-        
+
+        if(sum%2 != 0) return false;
         int target = sum/2;
-        
-        boolean[][] dp = new boolean[arr.length+1][target+1];
+        return isValid(nums, target, 0);
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    public boolean isValid(int[] nums, int target, int idx, Boolean[][] dp){
+        if(target == 0) return true;
+        if(idx == nums.length || target < 0) return false;
+        if(dp[idx][target] != null) return dp[idx][target];
+
+        boolean include = isValid(nums, target-nums[idx],idx+1, dp);
+        boolean exclude = isValid(nums, target, idx+1, dp);
+
+        return dp[idx][target] = include || exclude;
+    }
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for(int num: nums){
+            sum += num;
+        }
+
+        if(sum%2 != 0) return false;
+        int target = sum/2;
+        Boolean[][] dp = new Boolean[nums.length][target+1];
+        return isValid(nums, target, 0, dp);
+    }
+}
+
+## TABULATION ##
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for(int num: nums){
+            sum += num;
+        }
+
+        if(sum%2 != 0) return false;
+        int target = sum/2;
+        boolean[][] dp = new boolean[nums.length+1][target+1];
+
+        for(int i=0; i<nums.length; i++){
+            dp[i][0] = true;
+        }
         for(int j=1; j<=target; j++){
             dp[0][j] = false;
         }
-        for(int i=0; i<=arr.length; i++){
-            dp[i][0] = true;
-        }
-        
-        for(int i=1; i<=arr.length; i++){
+
+        for(int i=1; i<=nums.length; i++){
             for(int j=1; j<=target; j++){
-                if(arr[i-1] <=j ){
-                    dp[i][j] = dp[i-1][j] || dp[i-1][j-arr[i-1]];
+                if(nums[i-1] <= j){
+                    dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i-1]];
                 }else{
                     dp[i][j] = dp[i-1][j];
                 }
             }
         }
-        
-        return dp[arr.length][target];
+
+        return dp[nums.length][target];
     }
 }
 
-
-
-### MEMOIZATION ###
-class Solution {
-    static boolean isEqual(int[] arr, int target, int i, boolean[][] dp){
-        if(target == 0) return true;
-        if(i == arr.length || target < 0) return false;
-        
-        if(dp[i][target]) return dp[i][target];
-        
-        boolean take = isEqual(arr, target-arr[i], i+1, dp);
-        boolean notTake = isEqual(arr, target, i+1, dp);
-        
-        return dp[i][target] = take || notTake;
-    }
-    static boolean equalPartition(int arr[]) {
+## SPACE OPTIMIZATION ##class Solution {
+    public boolean canPartition(int[] nums) {
         int sum = 0;
-        for(int num: arr){
+        for(int num: nums){
             sum += num;
         }
-        
-        if(sum % 2 != 0) return false;
-        
+
+        if(sum%2 != 0) return false;
         int target = sum/2;
         
-        boolean[][] dp = new boolean[arr.length+1][target+1];
-        for(boolean[] dps: dp){
-            Arrays.fill(dps, false);
+        boolean[] prev = new boolean[target+1];
+        prev[0] = true;  // it is possible to make sum as 0
+
+        for(int i=1; i<=nums.length; i++){
+            boolean[] cur = new boolean[target+1];
+            cur[0] = true;
+            for(int j=1; j<=target; j++){
+                if(nums[i-1] <= j){
+                    cur[j] = prev[j] || prev[j-nums[i-1]];
+                }else{
+                    cur[j] = prev[j];
+                }
+            }
+            
+            prev = cur;
         }
-        
-        return isEqual(arr, target, 0, dp);
+
+        return prev[target];
     }
 }
