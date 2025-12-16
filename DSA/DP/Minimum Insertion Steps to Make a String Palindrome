@@ -1,0 +1,112 @@
+## RECURSION ##
+class Solution {
+    public boolean isPalindrome(String s){
+        int n = s.length();
+        for(int i=0; i<n/2; i++){
+            if(s.charAt(i) != s.charAt(n-i-1)) return false;
+        }
+        return true;
+    }
+    public int solve(String s, int i, int j){
+        if(i >= j) return 0;
+
+        if(s.charAt(i) == s.charAt(j)){
+            return solve(s,i+1,j-1);
+        }
+
+        int case1 = solve(s,i+1,j)+1;
+        int case2 = solve(s,i,j-1)+1;
+        return Math.min(case1, case2);
+    }
+    public int minInsertions(String s) {
+        if(isPalindrome(s)) return 0;
+        return solve(s,0,s.length()-1);
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    public boolean isPalindrome(String s){
+        int n = s.length();
+        for(int i=0; i<n/2; i++){
+            if(s.charAt(i) != s.charAt(n-i-1)) return false;
+        }
+        return true;
+    }
+    public int solve(String s, int i, int j, int[][] dp){
+        if(i >= j) return 0;
+        if(dp[i][j] != -1) return dp[i][j];
+
+        if(s.charAt(i) == s.charAt(j)){
+            return dp[i][j] = solve(s,i+1,j-1,dp);
+        }
+
+        int case1 = solve(s,i+1,j,dp)+1;
+        int case2 = solve(s,i,j-1,dp)+1;
+        return dp[i][j] = Math.min(case1, case2);
+    }
+    public int minInsertions(String s) {
+        if(isPalindrome(s)) return 0;
+        int[][] dp = new int[s.length()][s.length()];
+        for(int[] row: dp) Arrays.fill(row, -1);
+
+        return solve(s,0,s.length()-1,dp);
+    }
+}
+
+## TABULATION ##
+class Solution {
+    public boolean isPalindrome(String s){
+        int n = s.length();
+        for(int i=0; i<n/2; i++){
+            if(s.charAt(i) != s.charAt(n-i-1)) return false;
+        }
+        return true;
+    }
+    public int minInsertions(String s) {
+        if(isPalindrome(s)) return 0;
+        int n = s.length();
+        int[][] dp = new int[n][n];
+        // len = 0 & 1 are alreay palindrome
+
+        for(int len = 2; len<=n; len++){
+            for(int i=0; i+len-1<n; i++){
+                int j = i+len-1;   // j at last index of string of length (len)
+                if(s.charAt(i) == s.charAt(j)){
+                    dp[i][j] = dp[i+1][j-1];
+                }else{
+                    dp[i][j] = Math.min(dp[i+1][j], dp[i][j-1]) + 1;
+                }
+            }
+        }
+        return dp[0][n-1];   // steps needed for string starting from 0 and ending at n-1
+    }
+}
+
+## SPACE OPTIMIZATION ##
+class Solution {
+    public int minInsertions(String str) {
+        String s = new StringBuilder(str).reverse().toString();
+
+        // LPS = longest subsequence that is already palindrome
+        // Remaining characters must be inserted
+
+        int n = s.length();
+        int[] prev = new int[n+1];
+        int[] cur = new int[n+1];
+        for(int i=1; i<=n; i++){
+            cur = new int[n + 1];
+            for(int j=1; j<=n; j++){
+                if(str.charAt(i-1) == s.charAt(j-1)){
+                    cur[j] = 1+prev[j-1]; // counting the palindrome string
+                }else{
+                    cur[j] = Math.max(prev[j], cur[j - 1]);
+                }
+            }
+            prev =cur.clone();
+        }
+
+        int lps = prev[n];
+        return n-lps;
+    }
+}
