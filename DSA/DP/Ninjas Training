@@ -1,0 +1,48 @@
+public class Solution {
+    public static int solve(int n, int[][] points, int last){
+        int max = Integer.MIN_VALUE;
+        if(n == 0){
+            for(int j=0; j<3; j++){
+                if(j != last){
+                    max = Math.max(max, points[n][j]);
+                }
+            }
+            return max;
+        }
+
+        for(int j=0; j<3; j++){
+            if(j != last){
+                int curr = points[n][j] + solve(n - 1, points, j);
+                max = Math.max(max, curr);
+            }
+        }
+        return max;
+        
+    }
+    public static int ninjaTraining(int n, int points[][]) {
+        return solve(n-1, points, -1);
+    }
+
+}
+TC => O(3^n)
+
+## OPIMISATION ##
+public class Solution {
+    public static int ninjaTraining(int n, int points[][]) {
+        int last1 = points[0][0];
+        int last2 = points[0][1];
+        int last3 = points[0][2];
+
+        for(int i=1; i<n; i++){
+            int cur1 = Math.max(last2, last3) + points[i][0];
+            int cur2 = Math.max(last1, last3) + points[i][1];
+            int cur3 = Math.max(last1, last2) + points[i][2];
+            last1 = cur1;
+            last2 = cur2;
+            last3 = cur3;
+        }
+
+        return Math.max(last3, Math.max(last1, last2));
+    }
+
+}
