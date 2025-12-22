@@ -1,0 +1,29 @@
+class Solution {
+    public int findNumberOfLIS(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        int[] count = new int[n];
+        Arrays.fill(dp, 1);
+        Arrays.fill(count, 1);
+        int max = 1;
+
+        for(int cur = 1;cur < n; cur++){
+            for(int prev = 0; prev < cur; prev++){
+                if(nums[cur] > nums[prev] && dp[cur] < dp[prev]+1){
+                    dp[cur] = dp[prev]+1;
+                    count[cur] = count[prev];
+                    max = Math.max(dp[cur], max);
+                }else if(nums[cur] > nums[prev] && dp[cur] == dp[prev]+1){
+                    count[cur] += count[prev];
+                }
+            }
+        }
+
+        int nls = 0;  // no. of longest increasing subsequences
+        for(int i=0; i<n; i++){
+            if(dp[i] == max) nls += count[i];
+        }
+
+        return nls;
+    }
+}
