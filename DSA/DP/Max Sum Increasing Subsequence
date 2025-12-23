@@ -1,0 +1,24 @@
+class Solution {
+    public int maxSumIS(int nums[]) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        int max = Integer.MIN_VALUE;
+        
+        for(int i=0; i<n; i++){
+            dp[i] = nums[i];
+            max = Math.max(max, nums[i]);
+        }
+        
+        
+        for(int cur = 1; cur < n; cur++){
+            for(int prev = 0; prev < cur; prev++){
+                if(nums[prev] < nums[cur]){
+                    dp[cur] = Math.max(dp[cur], dp[prev]+nums[cur]);
+                    max = Math.max(max, dp[cur]);
+                }
+            }
+        }
+        
+        return max;
+    }
+}
