@@ -1,0 +1,35 @@
+import java.util.*;
+
+public class FerrisWheel {
+
+    public static long minRides(long[] weights, long x) {
+        Arrays.sort(weights);
+
+        int i = 0, j = weights.length - 1;
+        long ans = 0;
+
+        while (i <= j) {
+            if (weights[i] + weights[j] <= x) {
+                i++;   // pair lightest with heaviest
+            }
+            j--;       // heaviest always goes
+            ans++;
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        long x = sc.nextLong();
+
+        long[] weights = new long[n];
+        for (int i = 0; i < n; i++) {
+            weights[i] = sc.nextLong();
+        }
+
+        System.out.println(minRides(weights, x));
+        sc.close();
+    }
+}
