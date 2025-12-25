@@ -1,0 +1,38 @@
+## TABLUATION ##
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+
+        for(int cur=1; cur<n; cur++){
+            for(int prev=0; prev<cur; prev++){
+                if(nums[prev] < nums[cur] && dp[cur] < dp[prev]+1){
+                    dp[cur] = dp[prev]+1;
+                    if(dp[cur] >= 3) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+
+## SPACE AND TIME OPTMIZARION ##
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        int first = Integer.MAX_VALUE;
+        int second = Integer.MAX_VALUE;
+
+        for(int num: nums){
+            if(num <= first){
+                first = num;
+            }else if(num <= second){
+                second = num;
+            }else{
+                return true;
+            }
+        }
+        return false;
+    }
+}
