@@ -1,0 +1,68 @@
+## RECURSION ##
+class Solution {
+    public int solve(int[][] matrix, int i, int j){
+        if(i < 0 || j < 0 || i >= matrix.length || j >= matrix[0].length) return 0;
+
+        int len = 1;
+        if(i>0 && matrix[i-1][j] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i-1, j));
+        }
+        if(i < matrix.length-1 && matrix[i+1][j] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i+1, j));
+        }
+        if(j > 0 && matrix[i][j-1] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i, j-1));
+        }
+        if(j < matrix[0].length-1 && matrix[i][j+1] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i, j+1));
+        }
+
+        return len;
+    }
+    public int longestIncreasingPath(int[][] matrix) {
+        int maxLen = Integer.MIN_VALUE;
+
+        for(int i=0; i<matrix.length; i++){
+            for(int j=0; j<matrix[0].length; j++){
+                maxLen = Math.max(maxLen, solve(matrix, i, j));
+            }
+        }
+        return maxLen;
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    public int solve(int[][] matrix, int i, int j, int[][] dp){
+        if(i < 0 || j < 0 || i >= matrix.length || j >= matrix[0].length) return 0;
+        if(dp[i][j] != -1) return dp[i][j];
+
+        int len = 1;
+        if(i>0 && matrix[i-1][j] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i-1, j, dp));
+        }
+        if(i < matrix.length-1 && matrix[i+1][j] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i+1, j, dp));
+        }
+        if(j > 0 && matrix[i][j-1] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i, j-1, dp));
+        }
+        if(j < matrix[0].length-1 && matrix[i][j+1] > matrix[i][j]){
+            len = Math.max(len, 1+solve(matrix, i, j+1, dp));
+        }
+
+        return dp[i][j] = len;
+    }
+    public int longestIncreasingPath(int[][] matrix) {
+        int maxLen = Integer.MIN_VALUE;
+        int[][] dp = new int[matrix.length][matrix[0].length];
+        for(int[] row: dp) Arrays.fill(row, -1);
+
+        for(int i=0; i<matrix.length; i++){
+            for(int j=0; j<matrix[0].length; j++){
+                maxLen = Math.max(maxLen, solve(matrix, i, j,dp));
+            }
+        }
+        return maxLen;
+    }
+}
