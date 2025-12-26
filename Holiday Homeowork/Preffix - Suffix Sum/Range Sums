@@ -1,0 +1,41 @@
+import java.util.*;
+
+class DSU {
+    int[] parent;
+
+    DSU(int n) {
+        parent = new int[n+1];
+        for (int i = 0; i <= n; i++) parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    void union(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a != b) parent[a] = b;
+    }
+}
+
+public class RangeSums {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        int Q = sc.nextInt();
+
+        DSU dsu = new DSU(N);
+
+        for (int i = 0; i < Q; i++) {
+            int l = sc.nextInt();
+            int r = sc.nextInt();
+            dsu.union(l - 1, r);
+        }
+        sc.close();
+
+        System.out.println(dsu.find(0) == dsu.find(N) ? "Yes" : "No");
+    }
+}
