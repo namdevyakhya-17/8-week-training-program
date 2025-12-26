@@ -1,0 +1,121 @@
+package TwoPointers;
+import java.util.*;
+
+public class SubarraySum {
+    public static void findSum(int[] arr, int l, int r){  // O(n^3)
+        int sum = 0;
+
+        for(int i=l; i<=r; i++){
+            for(int j=i; j<=r; j++){
+                int sum1 = 0;
+                for(int k=i; k<=j; k++){
+                    sum1 += arr[k];
+                }
+                sum += sum1;
+            }
+        }
+
+        System.out.println(sum);
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int q = sc.nextInt();
+        int[] arr = new int[n];
+        for(int i=0; i<n; i++){
+            arr[i] = sc.nextInt();
+        }
+
+        for(int i=0; i<q; i++){
+            int l = sc.nextInt();
+            int r = sc.nextInt();
+            findSum(arr,l-1,r-1);
+        }
+        sc.close();
+    }
+}
+
+## OPTIMISED ##
+package TwoPointers;
+import java.util.*;
+
+public class SubarraySum {
+    public static void findSum(int[] arr, int l, int r){  // O(n^2)
+        int sum = 0;
+
+        for(int i=l; i<=r; i++){
+            int left = i, right = r, curSum = 0;
+            while(left <= right){
+                curSum += arr[left];
+                sum += curSum;
+                left++;
+            }
+        }
+
+        System.out.println(sum);
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int q = sc.nextInt();
+        int[] arr = new int[n];
+        for(int i=0; i<n; i++){
+            arr[i] = sc.nextInt();
+        }
+
+        for(int i=0; i<q; i++){
+            int l = sc.nextInt();
+            int r = sc.nextInt();
+            findSum(arr,l-1,r-1);
+        }
+        sc.close();
+    }
+}
+
+
+## MORE OPTIMISED ##
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int Q = Integer.parseInt(st.nextToken());
+
+        long[] S1 = new long[N + 1];
+        long[] S2 = new long[N + 1];
+        long[] S3 = new long[N + 1];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= N; i++) {
+            int a = Integer.parseInt(st.nextToken());
+            S1[i] = S1[i - 1] + a;
+            S2[i] = S2[i - 1] + (long) a * i;
+            S3[i] = S3[i - 1] + (long) a * i * i;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        while (Q-- > 0) {
+            st = new StringTokenizer(br.readLine());
+            int L = Integer.parseInt(st.nextToken());
+            int R = Integer.parseInt(st.nextToken());
+
+            long sumA   = S1[R] - S1[L - 1];
+            long sumAj  = S2[R] - S2[L - 1];
+            long sumAj2 = S3[R] - S3[L - 1];
+
+            long ans = -sumAj2
+                     + (long)(L + R) * sumAj
+                     + (long)(R + 1) * (1L - L) * sumA;
+
+            sb.append(ans).append('\n');
+        }
+
+        System.out.print(sb);
+    }
+}
