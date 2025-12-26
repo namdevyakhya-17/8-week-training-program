@@ -1,0 +1,68 @@
+package BinarySearch;
+
+import java.util.Scanner;
+
+public class ArrayDivision {
+
+    // This function checks whether we can divide the array
+    // into at most k subarrays such that
+    // the maximum subarray sum does not exceed 'max'
+    public static boolean canProduce(long max, long[] arr, int k) {
+        long total = 0;      
+        int subarray = 1;    
+
+        for (int i = 0; i < arr.length; i++) {
+            total += arr[i];  
+            if (total > max) {
+                total = arr[i];  
+                subarray++;      
+            }
+            if (subarray > k)
+                return false;
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt(); 
+        int k = sc.nextInt(); 
+
+        long[] arr = new long[n];
+        long sum = 0;         
+        long max = Long.MIN_VALUE; 
+
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextLong();
+            sum += arr[i];
+            max = Math.max(max, arr[i]);
+        }
+
+        // low  -> maximum element
+        // high -> sum of entire array
+        long low = max;
+        long high = sum;
+        long ans = max;
+
+        while (low <= high) {
+
+            long mid = (low + high) / 2; 
+
+            // If division is possible with max sum = mid
+            if (canProduce(mid, arr, k)) {
+                ans = mid;        
+                high = mid - 1;   // try smaller maximum
+            } else {
+                low = mid + 1;    // need larger maximum
+            }
+        }
+
+        // Output the minimum possible maximum subarray sum
+        System.out.println(ans);
+
+        sc.close();
+    }
+}
