@@ -1,0 +1,43 @@
+package BinarySearch;
+
+import java.util.Scanner;
+
+public class FactoryMachine{
+    public static boolean canProduce(long time, long[] arr, long t){
+        long total = 0;
+        for(int i=0; i<arr.length; i++){
+            total += (time/arr[i]);
+            if(total >= t) return true;
+        }
+        return false;
+    }
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        long t = sc.nextInt();
+        long[] arr = new long[n];
+        long minTime = Long.MAX_VALUE;
+
+        for(int i=0; i<n; i++){
+            arr[i] = sc.nextLong();
+            minTime = Math.max(minTime, arr[i]);
+        }
+
+        long low = 0;
+        long high = minTime * t;
+        long ans = 0;
+
+        while(low <= high){
+            long mid = (low+high)/2;
+            if(canProduce(mid, arr, t)){
+                ans = mid;
+                high = mid-1;
+            }else{
+                low = mid+1;
+            }
+        }
+        System.out.println(ans);
+
+        sc.close();
+    }
+}
