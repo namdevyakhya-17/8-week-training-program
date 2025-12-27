@@ -1,0 +1,55 @@
+package BinarySearch;
+
+import java.util.*;
+
+public class RoomAllocation {
+    static class Node{
+        long end;
+        long room;
+        public Node(long end, long room){
+            this.end = end;
+            this.room = room;
+        }
+    }
+    public static void canAllocate(long[][] arr){
+        Arrays.sort(arr, (a,b) -> Long.compare(a[0],b[0]));
+        long[] ans = new long[arr.length];
+        
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> Long.compare(a.end, b.end));
+        long count = 0;
+        for(int i=0; i<arr.length; i++){
+            long arrive = arr[i][0];
+            long dep = arr[i][1];
+            int idx = (int) arr[i][2];
+
+            if(!pq.isEmpty() && pq.peek().end < arrive){
+                Node freeRoom = pq.poll();
+                ans[idx] = freeRoom.room;
+                pq.add(new Node(dep, freeRoom.room));
+            }else{
+                count++;
+                ans[idx] = count;
+                pq.add(new Node(dep, count));
+            }
+        }
+
+        System.out.println(count);
+        for(int i=0; i<arr.length; i++){
+            System.out.print(ans[i] + " ");
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        long[][] arr = new long[n][3];
+        for(int i=0; i<n; i++){
+            arr[i][0] = sc.nextLong();
+            arr[i][1] = sc.nextLong();
+            arr[i][2] = i;
+        }
+        sc.close();
+
+        canAllocate(arr);
+    }
+}
