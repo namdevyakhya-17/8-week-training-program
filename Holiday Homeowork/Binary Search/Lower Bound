@@ -1,0 +1,127 @@
+package BinarySearch;
+import java.util.Scanner;
+
+public class LowerBound {
+    public static String convertUpperToLower(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch >= 'A' && ch <= 'Z') {
+                ch = (char) (ch + ('a' - 'A')); // convert to lowercase
+            }
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+    public static String convertLowerToUpper(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch >= 'a' && ch <= 'z') {
+                ch = (char) (ch + ('A' - 'a')); // convert to upperCase
+            }
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int N = sc.nextInt();
+        sc.nextLine();
+        String s = sc.nextLine();
+
+        int Q = sc.nextInt();
+
+        for (int i = 0; i < Q; i++) {
+            int t = sc.nextInt();
+            int x = sc.nextInt() - 1; 
+            char c = sc.next().charAt(0);
+
+            if (t == 1) {
+                StringBuilder sb = new StringBuilder(s);
+                sb.setCharAt(x, c);
+                s = sb.toString();
+            } else if (t == 2) {
+                s = convertUpperToLower(s);
+            } else if (t == 3) {
+                s = convertLowerToUpper(s);
+            }
+        }
+        System.out.println(new String(s));
+        sc.close();
+    }
+}
+
+
+## OPTIMISED ##
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static class FastScanner {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        String next() {
+            while (st == null || !st.hasMoreTokens()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() {
+            return Integer.parseInt(next());
+        }
+    }
+
+    public static void main(String[] args) {
+        FastScanner sc = new FastScanner();
+
+        int N = sc.nextInt();
+        char[] s = sc.next().toCharArray();
+
+        int Q = sc.nextInt();
+
+        int[] lastUpdate = new int[N];
+        Arrays.fill(lastUpdate, -1);
+
+        int lastGlobalType = 0; // 0 = none, 2 = lowercase, 3 = uppercase
+        int lastGlobalTime = -1;
+
+        for (int time = 0; time < Q; time++) {
+            int t = sc.nextInt();
+            int x = sc.nextInt();
+            char c = sc.next().charAt(0);
+
+            if (t == 1) {
+                s[x - 1] = c;
+                lastUpdate[x - 1] = time;
+            } else {
+                lastGlobalType = t;
+                lastGlobalTime = time;
+            }
+        }
+
+        // Apply last global operation only ONCE
+        if (lastGlobalType != 0) {
+            for (int i = 0; i < N; i++) {
+                if (lastUpdate[i] < lastGlobalTime) {
+                    if (lastGlobalType == 2) {
+                        s[i] = Character.toLowerCase(s[i]);
+                    } else {
+                        s[i] = Character.toUpperCase(s[i]);
+                    }
+                }
+            }
+        }
+        System.out.println(new String(s));
+    }
+}
