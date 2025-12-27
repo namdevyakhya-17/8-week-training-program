@@ -1,0 +1,34 @@
+package BinarySearch;
+
+import java.util.*;
+
+public class InterestingDrink {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] arr = new int[n];
+        for(int i=0; i<n; i++){
+            arr[i] = sc.nextInt();
+        }
+
+        int d = sc.nextInt();
+        Arrays.sort(arr);
+        while(d-- > 0){
+            int cost = sc.nextInt();
+            int l = 0;
+            int r = n-1;
+            int ans = -1;
+            while(l <= r){
+                int mid = (l+r)/2;
+                if(arr[mid] <= cost){
+                    ans = mid;
+                    l = mid+1;
+                }else{
+                    r = mid-1;
+                }
+            }
+            System.out.println(ans + 1);
+        }
+        sc.close();
+    }
+}
