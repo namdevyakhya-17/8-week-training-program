@@ -1,0 +1,59 @@
+public class PoisionDagger {
+    public static boolean minK(long k, int[] arr, int h){
+        long[] diff = new long[arr.length];
+        for(int i=1; i<arr.length; i++){
+            diff[i-1] = Math.abs(arr[i]-arr[i-1]);
+        }
+        diff[arr.length-1] = k;
+
+        long sum = 0;
+        for(int i=0; i<arr.length; i++){
+            if(diff[i] > k) sum += k;
+            else sum += diff[i];
+        }
+
+        return sum >= h;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-- > 0){
+            int n = sc.nextInt();
+            int h = sc.nextInt();
+            int[] arr = new int[n];
+            for(int i=0; i<n; i++){
+                arr[i] = sc.nextInt();
+            }
+            long low = 1;
+            long high = (long) 1e18;
+            long ans = 0;
+            while(low <= high){
+                long mid = (low+high)/2;
+                if(minK(mid, arr, h)){
+                    ans = mid;
+                    high = mid-1;
+                }else{
+                    low = mid+1;
+                }
+            }
+
+            System.out.println(ans);
+        }
+        sc.close();
+
+    }
+}
+
+## OPTIMISED (minK method) ##
+static boolean canKill(long k, int[] arr, long h) {
+    long damage = 0;
+
+    for (int i = 0; i < arr.length - 1; i++) {
+        damage += Math.min(k, arr[i + 1] - arr[i]);
+        if (damage >= h) return true;
+    }
+
+    damage += k; // last attack
+    return damage >= h;
+}
