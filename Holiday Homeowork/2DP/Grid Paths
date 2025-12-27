@@ -69,3 +69,39 @@ public class GridPath {
         sc.close();
     }
 }
+
+## MORE OPTIMISED ##
+import java.io.*;
+import java.util.*;
+
+public class GridPath {
+    static final int MOD = 1000000007;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+
+        char[][] grid = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            grid[i] = br.readLine().toCharArray();
+        }
+
+        int[] dp = new int[n];
+
+        // start cell
+        dp[0] = (grid[0][0] == '.') ? 1 : 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+
+                if (grid[i][j] == '*') {
+                    dp[j] = 0;
+                } else if (j > 0) {
+                    dp[j] = (dp[j] + dp[j - 1]) % MOD;
+                }
+            }
+        }
+
+        System.out.println(dp[n - 1]);
+    }
+}
