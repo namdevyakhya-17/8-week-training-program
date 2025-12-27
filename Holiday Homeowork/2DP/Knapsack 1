@@ -1,0 +1,25 @@
+public class KnapsackOne {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int W = sc.nextInt();
+        int[] weight = new int[n];
+        long[] value = new long[n];
+
+        for(int i=0; i<n; i++){
+            weight[i] = sc.nextInt();
+            value[i] = sc.nextLong();
+        }
+        sc.close();
+
+        long[] dp = new long[W+1];
+        dp[0] = 0;
+        for(int i=1; i<=n; i++){
+            for(int j = W; j >= weight[i-1]; j--){    // as we want prev values while including item, so not to loss them we are traversing from last
+                dp[j] = Math.max(dp[j], dp[j - weight[i-1]] + value[i-1]);
+            }
+        }
+
+        System.out.println(dp[W]);
+    }
+}
