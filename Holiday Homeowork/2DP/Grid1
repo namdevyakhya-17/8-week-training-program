@@ -1,0 +1,47 @@
+package TwoDP;
+import java.io.*;
+import java.util.*;
+
+public class GridOne {
+    static final int MOD = 1000000007;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        char[][] grid = new char[n][m];
+
+        for (int i = 0; i < n; i++) {
+            String row = br.readLine();
+            for (int j = 0; j < m; j++) {
+                grid[i][j] = row.charAt(j);
+            }
+        }
+
+        int[][] dp = new int[n][m];
+
+        dp[0][0] = 1; // guaranteed empty
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (grid[i][j] == '#') {
+                    dp[i][j] = 0;
+                    continue;
+                }
+
+                if (i == 0 && j == 0) continue;
+
+                int fromUp = (i > 0) ? dp[i - 1][j] : 0;
+                int fromLeft = (j > 0) ? dp[i][j - 1] : 0;
+
+                dp[i][j] = (fromUp + fromLeft) % MOD;
+            }
+        }
+
+        System.out.println(dp[n - 1][m - 1]);
+    }
+}
