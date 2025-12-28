@@ -1,0 +1,25 @@
+class Solution {
+    public int maxRectSum(int mat[][]) {
+        int n = mat.length;
+        int m = mat[0].length;
+        int[] dp = new int[m];
+        int maxSum = Integer.MIN_VALUE;
+        
+        for(int i=0; i<n; i++){
+            Arrays.fill(dp, 0);
+            for(int temp = i; temp<n; temp++){
+                for(int j=0; j<m; j++){
+                    dp[j] = dp[j] + mat[temp][j];
+                }
+                int cur = 0;
+                int best = Integer.MIN_VALUE;
+                for(int val: dp){
+                    cur = Math.max(val, cur+val);
+                    best = Math.max(best, cur);
+                }
+                maxSum = Math.max(maxSum, best);
+            }
+        }
+        return maxSum;
+    }
+};
