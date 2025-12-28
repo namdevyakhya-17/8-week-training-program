@@ -1,0 +1,30 @@
+import java.util.*;
+ 
+public class Main {
+    static final int MOD = 1_000_000_007;
+ 
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+ 
+        int n = sc.nextInt();      // number of coins
+        int amount = sc.nextInt(); // target sum
+ 
+        int[] coins = new int[n];
+        for (int i = 0; i < n; i++) {
+            coins[i] = sc.nextInt();
+        }
+ 
+        int[] dp = new int[amount + 1];
+        dp[0] = 1;
+ 
+        // Coin Combinations I → ORDER MATTERS
+        for (int sum = 1; sum <= amount; sum++) {
+            for (int coin : coins) {
+                if (sum - coin >= 0) {
+                    dp[sum] = (dp[sum] + dp[sum - coin]) % MOD;
+                }
+            }
+        }
+ 
+        System.out.println(dp[amount]);
+ }
