@@ -1,0 +1,25 @@
+package OneDP;
+
+import java.util.*;
+
+public class DiceCombinations {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        sc.close();
+
+        int MOD = 1000000007;
+        long[] dp = new long[n + 1];
+        dp[0] = 1; // 1 way to make sum 0
+
+        for (int sum = 1; sum <= n; sum++) {
+            for (int face = 1; face <= 6; face++) {
+                if (sum - face >= 0) {
+                    dp[sum] = (dp[sum] + dp[sum - face]) % MOD;
+                }
+            }
+        }
+
+        System.out.println(dp[n]);
+    }
+}
