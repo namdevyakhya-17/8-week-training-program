@@ -1,0 +1,96 @@
+import java.util.*;
+
+public class WordCombinations {
+    static final int MOD = 1_000_000_007;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        int nWord = sc.nextInt();
+        sc.nextLine();
+
+        Set<String> dict = new HashSet<>();
+        Set<Integer> dictLen = new HashSet<>();
+
+        for(int i=0; i<nWord; i++){            
+            String word = sc.nextLine();
+            dict.add(word);
+            dictLen.add(word.length());
+        }
+        sc.close();
+
+        int n = str.length();
+        long[] dp = new long[n + 1];
+        dp[0] = 1;
+
+        for (int i = 1; i <= n; i++) {
+            for (int len : dictLen) {
+                if (i - len >= 0) {
+                    String sub = str.substring(i - len, i);
+                    if (dict.contains(sub)) {
+                        dp[i] = (dp[i] + dp[i - len]) % MOD;
+                    }
+                }
+            }
+        }
+
+        System.out.println(dp[n]);
+
+    }
+}
+
+## OPTIMISED ##
+import java.util.*;
+
+public class WordCombinations {
+    static final int MOD = 1_000_000_007;
+
+    static class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        boolean isWord = false;
+    }
+
+    // Insert a word in reversed order
+    static void insert(TrieNode root, String word) {
+        TrieNode node = root;
+        for (int i = word.length() - 1; i >= 0; i--) {
+            int c = word.charAt(i) - 'a';
+            if (node.children[c] == null) node.children[c] = new TrieNode();
+            node = node.children[c];
+        }
+        node.isWord = true;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        int nWords = sc.nextInt();
+        sc.nextLine();
+
+        TrieNode root = new TrieNode();
+        for (int i = 0; i < nWords; i++) {
+            String word = sc.nextLine();
+            insert(root, word);
+        }
+        sc.close();
+
+        int n = str.length();
+        long[] dp = new long[n + 1];
+        dp[0] = 1;
+
+        for (int i = 1; i <= n; i++) {
+            TrieNode node = root;
+            for (int j = i - 1; j >= 0; j--) {
+                int c = str.charAt(j) - 'a';
+                if (node.children[c] == null) break;
+                node = node.children[c];
+                if (node.isWord) {
+                    dp[i] = (dp[i] + dp[j]) % MOD;
+                }
+            }
+        }
+
+        System.out.println(dp[n]);
+    }
+}
+
+##
