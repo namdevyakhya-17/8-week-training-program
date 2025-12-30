@@ -1,0 +1,26 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class TowerOfHanoi {
+    public static void findMoves(String Left, String Middle, String Right, int n, ArrayList<String[]> ans){
+        if(n == 1){
+            ans.add(new String[]{Left, Right});
+            return;
+        }
+
+        findMoves(Left, Right, Middle, n-1, ans);
+        ans.add(new String[]{Left, Right});
+        findMoves(Middle, Left, Right, n-1, ans);
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        sc.close();
+        ArrayList<String[]> ans = new ArrayList<>();
+        findMoves("1","2","3",n,ans);
+        System.out.println(ans.size());
+        for(String[] moves: ans){
+            System.out.println(moves[0] + " " + moves[1]);
+        }
+    }
+}
