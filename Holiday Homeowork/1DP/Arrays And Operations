@@ -1,0 +1,40 @@
+package OneDP;
+import java.util.*;
+
+public class ArraysAndOperations {
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-- > 0){
+            int n = sc.nextInt();
+            int k = sc.nextInt();
+            int[] arr = new int[n];
+            for(int i=0; i<n; i++){
+                arr[i] = sc.nextInt();
+            }
+            
+            long cost = 0;
+            Arrays.sort(arr);
+            int idx = n-2*k;
+            int[] temp = new int[2*k];
+            for(int i=idx; i<n; i++){
+                temp[i-idx] = arr[i]; 
+            }
+            int i=0; 
+            while(i<k){
+                int ans = temp[i] / temp[i+k];
+                i++;
+                cost += ans;
+            }
+
+            // add rest of the element in cost
+            for(int p=0; p<idx; p++){
+                cost += arr[p];
+            }
+
+            System.out.println(cost);
+        }
+        sc.close();
+    }
+}
