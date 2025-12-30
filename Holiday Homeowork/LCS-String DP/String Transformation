@@ -1,0 +1,27 @@
+package OneDP;
+
+import java.util.Scanner;
+
+public class StringTransformation {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        sc.close();
+
+        char[] charArr = str.toCharArray();
+        int n = charArr.length;
+        char need = 'a';
+        for(int i=0; i<n && need <= 'z'; i++){
+            if(charArr[i] <= need){
+                charArr[i] = need;
+                need++;
+            }
+        }
+
+        if(need > 'z'){
+            System.out.println(new String(charArr));
+        }else{
+            System.out.println(-1);
+        }
+    }
+}
