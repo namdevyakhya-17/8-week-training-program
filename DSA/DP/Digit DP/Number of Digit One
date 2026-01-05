@@ -1,0 +1,54 @@
+## RECURSION ##
+class Solution {
+    public static int solve(String num, int i, int tight, int count){
+        if(i == num.length()) return count;
+
+        int lb = 0;
+        int ub = (tight == 1) ? num.charAt(i)-'0' : 9;
+        int res = 0;
+        for(int n=lb; n<=ub; n++){
+            int newtight = (tight == 1 && n == ub) ? 1 : 0;
+            if(n == 1){
+                res += solve(num, i+1, newtight, count+1);
+            }else{
+                res += solve(num, i+1, newtight, count);
+            }
+        }
+        return res;
+    }
+    public int countDigitOne(int n) {
+        int ans = solve(String.valueOf(n), 0, 1, 0);
+        return ans;
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    public static int solve(String num, int i, int tight, int count, int[][][] dp){
+        if(i == num.length()) return count;
+        if(dp[i][tight][count] != -1) return dp[i][tight][count];
+
+        int lb = 0;
+        int ub = (tight == 1) ? num.charAt(i)-'0' : 9;
+        int res = 0;
+        for(int n=lb; n<=ub; n++){
+            int newtight = (tight == 1 && n == ub) ? 1 : 0;
+            if(n == 1){
+                res += solve(num, i+1, newtight, count+1, dp);
+            }else{
+                res += solve(num, i+1, newtight, count, dp);
+            }
+        }
+        return dp[i][tight][count] = res;
+    }
+    public int countDigitOne(int n) {
+        int[][][] dp = new int[11][2][10];   // as 0 <= n <= 10^9 thus, count of 1 size is 10 as 10^9 can have total 10 digits as 1
+        for(int[][] row: dp){
+            for(int[] col: row){
+                Arrays.fill(col, -1);
+            }
+        }
+        int ans = solve(String.valueOf(n), 0, 1, 0, dp);
+        return ans;
+    }
+}
