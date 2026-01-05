@@ -1,0 +1,81 @@
+## RECURSION ##
+public class ClassyNumbers {
+    public static long solve(String num, int idx, int tight, int count){
+        if(count > 3) return 0;
+        if(idx == num.length()){
+            return 1;
+        }
+
+        int lb=0;
+        int ub=(tight == 1) ? num.charAt(idx)-'0' : 9;
+        long res = 0;
+        for(int digit=lb; digit<=ub; digit++){
+            int newTight = (tight == 1 && digit == ub) ? 1 : 0;
+            if(digit != 0){
+                res += solve(num, idx+1, newTight, count+1);
+            }else{
+                res += solve(num, idx+1, newTight, count);
+            }
+        }
+
+        return res;
+
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-- > 0){
+            long a = sc.nextLong();
+            long b = sc.nextLong();
+            String l = String.valueOf(a-1);
+            String r = String.valueOf(b);
+            long ans = solve(r,0,1,0) - solve(l,0,1,0);
+            System.out.println(ans); 
+        }
+        sc.close();
+    }
+}
+
+
+## MEMOIZATION ##
+public class ClassyNumbers {
+    public static long solve(String num, int idx, int tight, int count, Long[][][] dp){
+        if(count > 3) return 0;
+        if(idx == num.length()){
+            return 1;
+        }
+        if(dp[idx][tight][count] != null) return dp[idx][tight][count];
+
+        int lb=0;
+        int ub=(tight == 1) ? num.charAt(idx)-'0' : 9;
+        long res = 0;
+        for(int digit=lb; digit<=ub; digit++){
+            int newTight = (tight == 1 && digit == ub) ? 1 : 0;
+            if(digit != 0){
+                res += solve(num, idx+1, newTight, count+1,dp);
+            }else{
+                res += solve(num, idx+1, newTight, count,dp);
+            }
+        }
+
+        return dp[idx][tight][count] = res;
+
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-- > 0){
+            long a = sc.nextLong();
+            long b = sc.nextLong();
+            String l = String.valueOf(a-1);
+            String r = String.valueOf(b);
+            Long[][][] dp1 = new Long[20][2][4];
+            Long[][][] dp2 = new Long[20][2][4];
+            long ans = solve(r,0,1,0, dp1) - solve(l,0,1,0, dp2);
+            System.out.println(ans); 
+        }
+        sc.close();
+    }
+}
