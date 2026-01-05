@@ -1,0 +1,49 @@
+public class Gone_G_One_Numbers {
+    public static boolean isPrime(long n) {
+        if (n <= 1) return false;
+        if (n == 2) return true;
+        if (n % 2 == 0) return false;
+
+        for (int i = 3; i * i <= n; i += 2) {
+            if (n % i == 0)
+                return false;
+        }
+        return true;
+    }
+
+    public static long solve(String num, int idx, int tight, int sum, Long[][][] dp){
+        if(idx == num.length()){
+            if(isPrime(sum)) return 1;
+            return 0;
+        }
+        if(dp[idx][tight][sum] != null) return dp[idx][tight][sum];
+
+        int lb=0;
+        int ub=(tight == 1) ? num.charAt(idx)-'0' : 9;
+        long res = 0;
+        for(int d=lb; d<=ub; d++){
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            res += solve(num, idx+1, newTight, sum+d, dp);
+        }
+
+        return res;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while (t-- > 0) {
+            long a = sc.nextLong();
+            long b = sc.nextLong();
+            String l = String.valueOf(a-1);
+            String r = String.valueOf(b);
+            Long[][][] dp = new Long[10][2][82]; 
+            // 10 => as contrains is (range of a,b is 10^8 (inclusive)). Thus, total 9-digits in number + 1 is 0th index
+            // 2 => (0/1)
+            // 82 => max number is 9 * total digits in 10^8 is 9. Thus, 9*9 + 0th index
+            long ans = solve(r,0,1,0, dp) - solve(l,0,1,0, dp);
+            System.out.println(ans);
+        }
+        sc.close();
+    }
+}
