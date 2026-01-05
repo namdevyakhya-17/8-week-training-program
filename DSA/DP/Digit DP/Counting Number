@@ -4,7 +4,7 @@ public class CountingNumbers {
     public static long solve(String num, int idx, int tight, long prev, int lz){
         if(idx == num.length()) return 1;
 
-        long lb = 0; // lower bound
+        long lb = 0; // lower bound 
         long ub = (tight == 1) ? num.charAt(idx)-'0' : 9;  //upper bound
         long res = 0;
 
