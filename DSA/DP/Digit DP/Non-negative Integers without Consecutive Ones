@@ -1,0 +1,46 @@
+## RECURSION ##
+class Solution {
+    public int solve(String s, int idx, int tight, int prev){
+        if(idx == s.length()) return 1;
+
+        int lb=0;
+        int ub=(tight == 1) ? s.charAt(idx)-'0' : 1;
+        int res = 0;
+        for(int d=lb; d<=ub; d++){
+            if(prev == 1 && d == 1) continue;
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            res += solve(s,idx+1,newTight,d);
+        }
+
+        return res;
+    }
+    public int findIntegers(int n) {
+        String s = Integer.toBinaryString(n);
+        return solve(s,0,1,0);
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    Integer[][][] dp;
+    public int solve(String s, int idx, int tight, int prev){
+        if(idx == s.length()) return 1;
+        if(dp[idx][tight][prev] != null) return dp[idx][tight][prev];
+
+        int lb=0;
+        int ub=(tight == 1) ? s.charAt(idx)-'0' : 1;
+        int res = 0;
+        for(int d=lb; d<=ub; d++){
+            if(prev == 1 && d == 1) continue;
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            res += solve(s,idx+1,newTight,d);
+        }
+
+        return dp[idx][tight][prev] = res;
+    }
+    public int findIntegers(int n) {
+        String s = Integer.toBinaryString(n);
+        dp = new Integer[s.length()][2][2];
+        return solve(s,0,1,0);
+    }
+}
