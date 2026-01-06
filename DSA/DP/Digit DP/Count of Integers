@@ -66,12 +66,11 @@ class Solution {
             sb.setCharAt(i, (char) (sb.charAt(i) - 1));
 
         String num = sb.toString();
-        Integer[][][] dp1 = new Integer[24][2][401];
-        Integer[][][] dp2 = new Integer[24][2][401]; // 22*9
+        Integer[][][] dp1 = new Integer[24][2][199];
+        Integer[][][] dp2 = new Integer[24][2][199]; 
         
         int right = isGood(num2, 0, 1, 0, min_sum, max_sum, dp1);
         int left  = isGood(num,  0, 1, 0, min_sum, max_sum, dp2);
         return (right - left + mod) % mod;
-
     }
 }
