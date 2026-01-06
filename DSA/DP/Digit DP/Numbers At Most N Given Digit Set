@@ -1,0 +1,67 @@
+## RECURSION ##
+class Solution {
+    public int solve(String s, int idx, int tight, int lz, int mask){
+        if(idx == s.length()){
+            return 1;
+        }
+
+        int lb = 0;
+        int ub = (tight == 1) ? s.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int dig = lb; dig <= ub; dig++){
+            int newTight = (tight == 1 && dig == ub) ? 1 : 0;
+            int isDigitUsed = (mask >> dig) & 1;
+            if(lz == 1 && dig == 0){
+                res += solve(s,idx+1,newTight,lz,mask);
+            }
+            else if(isDigitUsed == 1){
+                res += solve(s,idx+1,newTight,0,mask);
+            } else continue;
+        }
+
+        return res;
+    }
+    public int atMostNGivenDigitSet(String[] digits, int n) {
+        String s = String.valueOf(n);
+        int mask = 0;
+        for(String d: digits){
+            mask = (1 << Integer.parseInt(d)) | mask;
+        }
+        return solve(s,0,1,1,mask)-1;
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    public int solve(String s, int idx, int tight, int lz, int mask, Integer[][][] dp){
+        if(idx == s.length()){
+            return 1;
+        }
+        if(dp[idx][tight][lz] != null) return dp[idx][tight][lz];
+
+        int lb = 0;
+        int ub = (tight == 1) ? s.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int dig = lb; dig <= ub; dig++){
+            int newTight = (tight == 1 && dig == ub) ? 1 : 0;
+            int isDigitUsed = (mask >> dig) & 1;
+            if(lz == 1 && dig == 0){
+                res += solve(s,idx+1,newTight,lz,mask,dp);
+            }
+            else if(isDigitUsed == 1){
+                res += solve(s,idx+1,newTight,0,mask,dp);
+            } else continue;
+        }
+
+        return dp[idx][tight][lz] = res;
+    }
+    public int atMostNGivenDigitSet(String[] digits, int n) {
+        String s = String.valueOf(n);
+        int mask = 0;
+        for(String d: digits){
+            mask = (1 << Integer.parseInt(d)) | mask;
+        }
+        Integer[][][] dp = new Integer[11][2][2];   // TC - 11*2*2
+        return solve(s,0,1,1,mask,dp)-1;
+    }
+}
