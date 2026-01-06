@@ -1,0 +1,66 @@
+## RECURSION ##
+class Solution {
+    public int solve(String s, int idx, int tight, int repeated, int mask, int lz){
+        if(idx == s.length()){
+            return repeated;
+        }
+        int lb = 0;
+        int ub = (tight == 1) ? s.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int d=lb; d<=ub; d++){
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            if(lz == 1 && d == 0){ // still number forming is not started
+                res += solve(s,idx+1,newTight,repeated,mask,lz);
+            }else{
+                int isDigitUsed = 1 & (mask >> d);  // to check if that digit is already used (set as 1)
+                // int isDigitUsed = (1 << d) & mask  (METHOD -> 2)
+                int newRepeated = (repeated == 1 || isDigitUsed == 1) ? 1 : 0;
+                int newMask = (1 << d) | mask;  // to set digit as 1, to show that it is already included in the number
+                res += solve(s,idx+1,newTight,newRepeated,newMask,0);  // set lz=0 as number is started forming
+            }
+        }
+
+        return res;
+    }
+    public int numDupDigitsAtMostN(int n) {
+        String s = String.valueOf(n);
+        int ans = solve(s,0,1,0,0,1);   // idx, tight,repeated,mask,lz
+        return ans;
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    public int solve(String s, int idx, int tight, int repeated, int mask, int lz, Integer[][][][][] dp){
+        if(idx == s.length()){
+            return repeated;
+        }
+        if(dp[idx][tight][repeated][mask][lz] != null){
+            return dp[idx][tight][repeated][mask][lz];
+        }
+
+        int lb = 0;
+        int ub = (tight == 1) ? s.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int d=lb; d<=ub; d++){
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            if(lz == 1 && d == 0){ // still number forming is not started
+                res += solve(s,idx+1,newTight,repeated,mask,lz,dp);
+            }else{
+                int isDigitUsed = 1 & (mask >> d);  // to check if that digit is already used (set as 1)
+                // int isDigitUsed = (1 << d) & mask  (METHOD -> 2)
+                int newRepeated = (repeated == 1 || isDigitUsed == 1) ? 1 : 0;
+                int newMask = (1 << d) | mask;  // to set digit as 1, to show that it is already included in the number
+                res += solve(s,idx+1,newTight,newRepeated,newMask,0,dp);  // set lz=0 as number is started forming
+            }
+        }
+
+        return dp[idx][tight][repeated][mask][lz] = res;
+    }
+    public int numDupDigitsAtMostN(int n) {
+        String s = String.valueOf(n);
+        Integer[][][][][] dp = new Integer[11][2][2][1024][2];
+        int ans = solve(s,0,1,0,0,1,dp);   // idx, tight,repeated,mask,lz
+        return ans;
+    }
+}
