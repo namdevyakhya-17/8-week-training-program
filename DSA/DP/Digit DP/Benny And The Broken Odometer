@@ -1,0 +1,32 @@
+import java.util.*;
+
+public class BennyAndTheBrokenOdometer {
+    public static long solve(String num, int idx, int tight, Long[][] dp){
+        if(idx == num.length()){
+            return 1;
+        }
+        if(dp[idx][tight] != null) return dp[idx][tight];
+
+        int lb=0;
+        int ub=(tight == 1) ? num.charAt(idx)-'0' : 9;
+        long res = 0;
+        for(int digit=lb; digit<=ub; digit++){
+            if(digit == 3) continue;
+            int newTight = (tight == 1 && digit == ub) ? 1 : 0;
+            res += solve(num, idx+1, newTight,dp);
+        }
+
+        return dp[idx][tight] = res;
+    }
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        while(t-- > 0){
+            int n = sc.nextInt();
+            Long[][] dp = new Long[10][2];
+            long ans = solve(String.valueOf(n), 0,1,dp);
+            System.out.println(ans-1);   // subtract 1 as 0 we are excluding count of 0
+        }
+        sc.close();
+    }
+}
