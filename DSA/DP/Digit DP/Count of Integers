@@ -1,0 +1,77 @@
+## RECURSION ##
+class Solution {
+    public int isGood(String num, int idx, int tight, int sum, int min_sum, int max_sum){
+        if(idx == num.length()){
+            if(sum >= min_sum && sum <= max_sum) return 1;
+            else return 0;
+        }
+
+        int lb = 0;
+        int ub = (tight == 1) ? num.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int d=lb; d<=ub; d++){
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            res += isGood(num, idx+1, newTight, sum+d, min_sum, max_sum);
+        }
+        return res;
+    }
+    public int count(String num1, String num2, int min_sum, int max_sum) {
+        StringBuilder sb = new StringBuilder(num1);
+        int i = sb.length()-1;
+        while(i >= 0 && sb.charAt(i) == '0'){
+            sb.setCharAt(i,'9');
+            i--;
+        }
+
+        // decrease 1st non zero digit;
+        sb.setCharAt(i, (char) (sb.charAt(i)-1));
+        String num = sb.toString();
+        return isGood(num2, 0,1,0,min_sum,max_sum) - isGood(num, 0,1,0,min_sum,max_sum) ;
+    }
+}
+
+## MEMOIZATION ##
+class Solution {
+    int mod = 1_000_000_007;
+    public int isGood(String num, int idx, int tight, int sum, int min_sum, int max_sum, Integer[][][] dp){
+        if(sum > max_sum) return 0;
+        if(idx == num.length()){
+            if(sum >= min_sum && sum <= max_sum) return 1;
+            else return 0;
+        }
+
+        if(dp[idx][tight][sum] != null) return dp[idx][tight][sum];
+
+        int lb = 0;
+        int ub = (tight == 1) ? num.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int d=lb; d<=ub; d++){
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            int newSum = sum + d;
+            res = (res + isGood(num, idx+1, newTight, newSum, min_sum, max_sum, dp)) % mod;
+
+        }
+        return dp[idx][tight][sum] = res;
+    }
+    public int count(String num1, String num2, int min_sum, int max_sum) {
+        StringBuilder sb = new StringBuilder(num1);
+        int i = sb.length()-1;
+        while(i >= 0 && sb.charAt(i) == '0'){
+            sb.setCharAt(i,'9');
+            i--;
+        }
+
+        // decrease 1st non zero digit;
+        if (i >= 0)
+            sb.setCharAt(i, (char) (sb.charAt(i) - 1));
+
+        String num = sb.toString();
+        Integer[][][] dp1 = new Integer[24][2][401];
+        Integer[][][] dp2 = new Integer[24][2][401]; // 22*9
+        
+        int right = isGood(num2, 0, 1, 0, min_sum, max_sum, dp1);
+        int left  = isGood(num,  0, 1, 0, min_sum, max_sum, dp2);
+        return (right - left + mod) % mod;
+
+    }
+}
