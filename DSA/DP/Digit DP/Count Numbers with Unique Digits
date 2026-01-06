@@ -1,0 +1,33 @@
+class Solution {
+    Integer[][][][][] dp;
+    static final int len = 10;
+    static final int mask = 1024;
+    public int solve(String s, int idx, int tight, int repeated, int mask, int lz){
+        if(idx == s.length()) return repeated;
+        if(dp[idx][tight][repeated][mask][lz] != null) return dp[idx][tight][repeated][mask][lz];
+
+        int lb = 0;
+        int ub = (tight == 1) ? s.charAt(idx)-'0' : 9;
+        int res = 0;
+        for(int d = lb; d <= ub; d++){
+            int newTight = (tight == 1 && d == ub) ? 1 : 0;
+            if(lz == 1 && d == 0){
+                res += solve(s, idx+1, newTight, repeated, mask, lz);
+            }else{
+                int isDigitUsed = 1 & (mask >> d);
+                int newRepeated = (repeated == 1 || isDigitUsed == 1) ? 1 : 0;
+                int newMask = (1 << d) | mask;
+                res += solve(s, idx+1, newTight, newRepeated, newMask, 0);
+            }
+        }
+
+        return dp[idx][tight][repeated][mask][lz] = res;
+    }
+    public int countNumbersWithUniqueDigits(int n) {
+        int num = (int) Math.pow(10,n);
+        String s = String.valueOf(num-1);
+        dp = new Integer[len][2][2][mask][2];
+        int ans = solve(s,0,1,0,0,1);
+        return num - ans;
+    }
+}
