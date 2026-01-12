@@ -53,3 +53,33 @@ class Solution {
         return solve(1,m,cut);    // as the last cut in the new array is already on +1th idx of it
     }
 }
+
+## Tabulation ##
+class Solution {
+    public int minCost(int n, int[] cuts) {
+        int m = cuts.length;
+        int[] cut = new int[m+2];
+        cut[0] = 0;
+        cut[cut.length-1] = n;
+        Arrays.sort(cuts);
+        int[][] dp = new int[m+2][m+2];
+
+        for(int i=1; i<=m; i++){
+            cut[i] = cuts[i-1];
+        }
+
+        for(int i=m; i>=1; i--){
+            for(int j=1; j<=m; j++){
+                if(i > j) continue;
+                int minCost = Integer.MAX_VALUE;
+                for(int idx=i; idx<=j; idx++){    // trying for the cut at jth idx also
+                    int cost = cut[j+1] - cut[i-1] + dp[i][idx-1] + dp[idx+1][j];
+                    minCost = Math.min(minCost, cost);
+                }
+                dp[i][j] = minCost;
+            }
+        }
+
+        return dp[1][m];
+    }
+}
