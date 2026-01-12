@@ -1,0 +1,55 @@
+## Recursion ##
+class Solution {
+    public int solve(int i, int j, int cut[]){
+        if(i > j) return 0;
+
+        int minCost = Integer.MAX_VALUE;
+        for(int idx=i; idx<=j; idx++){    // trying for the cut at jth idx also
+            int cost = cut[j+1] - cut[i-1] + solve(i, idx-1, cut) + solve(idx+1, j, cut);
+            minCost = Math.min(minCost, cost);
+        }
+        return minCost;
+    }
+    public int minCost(int n, int[] cuts) {
+        int m = cuts.length;
+        int[] cut = new int[m+2];
+        cut[0] = 0;
+        cut[cut.length-1] = n;
+        Arrays.sort(cuts);
+        for(int i=1; i<=m; i++){
+            cut[i] = cuts[i-1];
+        }
+
+        return solve(1,m,cut);    // as the last cut in the new array is already on +1th idx of it
+    }
+}
+
+## Memoization ##
+class Solution {
+    Integer[][] dp;
+    public int solve(int i, int j, int cut[]){
+        if(i > j) return 0;
+        if(dp[i][j] != null) return dp[i][j];
+
+        int minCost = Integer.MAX_VALUE;
+        for(int idx=i; idx<=j; idx++){    // trying for the cut at jth idx also
+            int cost = cut[j+1] - cut[i-1] + solve(i, idx-1, cut) + solve(idx+1, j, cut);
+            minCost = Math.min(minCost, cost);
+        }
+        return dp[i][j] = minCost;
+    }
+    public int minCost(int n, int[] cuts) {
+        int m = cuts.length;
+        int[] cut = new int[m+2];
+        cut[0] = 0;
+        cut[cut.length-1] = n;
+        Arrays.sort(cuts);
+        dp = new Integer[m+2][m+2];
+
+        for(int i=1; i<=m; i++){
+            cut[i] = cuts[i-1];
+        }
+
+        return solve(1,m,cut);    // as the last cut in the new array is already on +1th idx of it
+    }
+}
