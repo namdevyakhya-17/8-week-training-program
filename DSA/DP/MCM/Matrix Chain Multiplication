@@ -1,0 +1,47 @@
+## MEMOIZATION ##
+class Solution {
+    static Integer[][] dp;
+    
+    static int mcm(int i, int j, int[] arr){
+        if(i == j) return 0;  // only 1 matrix exists whose multiplication is not possible to find cost
+        if(dp[i][j] != null) return dp[i][j];
+        
+        int minCost = Integer.MAX_VALUE;
+        for(int idx = i; idx < j; idx++){
+            int cost = arr[i-1]*arr[idx]*arr[j] + 
+                        mcm(i,idx,arr)+
+                        mcm(idx+1,j,arr);
+            minCost = Math.min(minCost, cost);
+        }
+        
+        return dp[i][j] = minCost;
+    }
+    static int matrixMultiplication(int arr[]) {
+        int n = arr.length-1;
+        dp = new Integer[n+1][n+1];
+        int i=1;
+        return mcm(i,n,arr);
+    }
+}
+
+## TABULATION ##
+class Solution {
+    
+    static int matrixMultiplication(int arr[]) {
+        int n = arr.length-1;
+        int[][] dp = new int[n+1][n+1];
+        
+        for(int i=n; i>=1; i--){
+            for(int j=i+1; j<=n; j++){
+                int minCost = Integer.MAX_VALUE;
+                for(int idx=i; idx<j; idx++){
+                    int cost = arr[i-1]*arr[idx]*arr[j] + dp[i][idx] + dp[idx+1][j];
+                    minCost = Math.min(minCost, cost);
+                }
+                dp[i][j] = minCost;
+            }
+        }
+        
+        return dp[1][n];
+    }
+}
