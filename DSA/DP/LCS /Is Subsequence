@@ -1,0 +1,67 @@
+## MEMOIZATION ##
+class Solution {
+    Boolean[][] dp;
+    public boolean solve(String s, String t, int i, int j){
+        if(i < 0) return true;
+        if(j < 0) return false;
+        if(dp[i][j] != null) return dp[i][j];
+
+        if(s.charAt(i) == t.charAt(j)){
+            return dp[i][j] = solve(s,t,i-1,j-1);
+        }else{
+            return dp[i][j] = solve(s,t,i,j-1);
+        }
+    }
+    public boolean isSubsequence(String s, String t) {
+        dp = new Boolean[s.length()][t.length()];
+        return solve(s,t,s.length()-1,t.length()-1);
+    }
+}
+
+## TABULATION ##
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        boolean[] dp1 = new boolean[t.length()+1];
+        for(int i=0; i<=t.length(); i++){
+            dp1[i] = true;
+        }
+
+        for(int i=1; i<=s.length(); i++){
+            boolean[] dp2 = new boolean[t.length()+1];
+            for(int j=1; j<=t.length(); j++){
+                if(s.charAt(i-1) == t.charAt(j-1)){
+                    dp2[j] = dp1[j-1];
+                }else{
+                    dp2[j] = dp2[j-1];
+                }
+            }
+            dp1 = dp2;
+        }
+
+        return dp1[t.length()];
+    }
+}
+
+## SPACE OPTIMISATION ##
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        boolean[] dp1 = new boolean[t.length()+1];
+        for(int i=0; i<=t.length(); i++){
+            dp1[i] = true;
+        }
+
+        for(int i=1; i<=s.length(); i++){
+            boolean[] dp2 = new boolean[t.length()+1];
+            for(int j=1; j<=t.length(); j++){
+                if(s.charAt(i-1) == t.charAt(j-1)){
+                    dp2[j] = dp1[j-1];
+                }else{
+                    dp2[j] = dp2[j-1];
+                }
+            }
+            dp1 = dp2;
+        }
+
+        return dp1[t.length()];
+    }
+}
