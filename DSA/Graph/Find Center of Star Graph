@@ -4,7 +4,7 @@ Solution {
         int n = edges.length+1;
         int[][] mat = new int[n+1][n+1];
 
-        for(int[] edge: edges){
+        for(int[] edge: edges){ 
             int u = edge[0];
             int v = edge[1];
             mat[u][v] = 1;
