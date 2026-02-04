@@ -1,3 +1,4 @@
+// BFS
 class Solution {
     public boolean validPath(int n, int[][] edges, int source, int destination) {
         ArrayList<ArrayList<Integer>> adjList = new ArrayList<>();
@@ -25,6 +26,38 @@ class Solution {
                 }
             }
         }
+
+        return visited[destination];
+    }
+}
+
+
+// DFS
+class Solution {
+    public void dfs(ArrayList<ArrayList<Integer>> adjList, boolean[] visited, int source){
+        visited[source] = true;
+
+        for(int adjNode: adjList.get(source)){
+            if(!visited[adjNode]){
+                dfs(adjList, visited, adjNode);
+            }
+        }
+    }
+    public boolean validPath(int n, int[][] edges, int source, int destination) {
+        ArrayList<ArrayList<Integer>> adjList = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            adjList.add(new ArrayList<>());
+        }
+        
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+
+        boolean[] visited = new boolean[n];
+        dfs(adjList,visited,source);
 
         return visited[destination];
     }
