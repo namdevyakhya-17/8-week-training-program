@@ -1,0 +1,39 @@
+class Solution {
+    public boolean dfs(ArrayList<ArrayList<Integer>> adjList, int cur, int par, boolean[] visited){
+        visited[cur] = true;
+        
+        for(int adjNode : adjList.get(cur)){
+            if(visited[adjNode] && adjNode == par){
+                continue;
+            }else if(visited[adjNode] && adjNode != par){
+                return true;
+            }else{
+                dfs(adjList, adjNode, cur, visited);
+            }
+        }
+        
+        return false;
+    }
+    public boolean isCycle(int V, int[][] edges) {
+        ArrayList<ArrayList<Integer>> adjList = new ArrayList<>();
+        for(int i=0; i<V; i++){
+            adjList.add(new ArrayList<>());
+        }
+        
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+        
+        for(int i=0; i<V; i++){
+            boolean[] visited = new boolean[V];
+            if(!visited[i]){
+                if(dfs(adjList, i, -1, visited)) return true;
+            }
+        }
+        
+        return false;
+    }
+}
