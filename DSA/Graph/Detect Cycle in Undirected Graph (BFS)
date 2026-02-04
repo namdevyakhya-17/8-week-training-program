@@ -1,0 +1,55 @@
+class Solution {
+    class Pair{
+        int cur;
+        int par;
+        Pair(int cur, int par){
+            this.cur = cur;
+            this.par = par;
+        }
+    }
+    
+    public boolean bfs(ArrayList<ArrayList<Integer>> adjList, int cur, int par, boolean[] visited){
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(cur,par));
+        visited[cur] = true;
+        
+        while(!q.isEmpty()){
+            Pair node = q.poll();
+            
+            for(int adjNode: adjList.get(node.cur)){
+                if(visited[adjNode] && adjNode != node.par){
+                    return true;
+                }else if(visited[adjNode] && adjNode == node.par){
+                    continue;
+                }else{
+                    visited[adjNode] = true;
+                    q.add(new Pair(adjNode, node.cur));
+                }
+            }
+        }
+        
+        return false;
+    }
+    public boolean isCycle(int V, int[][] edges) {
+        ArrayList<ArrayList<Integer>> adjList = new ArrayList<>();
+        for(int i=0; i<V; i++){
+            adjList.add(new ArrayList<>());
+        }
+        
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+        
+        boolean[] visited = new boolean[V];
+        for(int i=0; i<V; i++){
+            if(!visited[i]){
+                if(bfs(adjList, i, -1, visited)) return true;
+            }
+        }
+        
+        return false;
+    }
+}
