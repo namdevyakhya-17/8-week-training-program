@@ -1,0 +1,18 @@
+class Solution {
+    public void dfsUtil(ArrayList<ArrayList<Integer>> adj, boolean[] visited, ArrayList<Integer>ans, int cur){
+        visited[cur] = true;
+        ans.add(cur);
+        
+        for(int adjNode: adj.get(cur)){
+            if(!visited[adjNode]){
+                dfsUtil(adj, visited, ans, adjNode);
+            }
+        }
+    }
+    public ArrayList<Integer> dfs(ArrayList<ArrayList<Integer>> adj) {
+        boolean[] visited = new boolean[adj.size()];
+        ArrayList<Integer> ans = new ArrayList<>();
+        dfsUtil(adj,visited,ans,0);
+        return ans;
+    }
+}
