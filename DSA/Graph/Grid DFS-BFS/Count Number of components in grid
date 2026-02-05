@@ -1,0 +1,46 @@
+class Main {
+    // up, down, left, right
+    static int[] dr = {-1,1,0,0}; 
+    static int[] dc = {0,0,-1,1};
+    public static void dfs(int[][] grid, int i, int j, int rowL, int colL, boolean[][] visited){
+        if(visited[i][j] == true || grid[i][j] != 1) return;
+        
+        visited[i][j] = true;
+        // Way 1
+        // dfs(grid,i-1,j,rowL,colL,visited);
+        // dfs(grid,i+1,j,rowL,colL,visited);
+        // dfs(grid,i,j-1,rowL,colL,visited);
+        // dfs(grid,i,j+1,rowL,colL,visited);
+        
+        // Way 2
+        for(int dir=0; dir<4; dir++){
+            int new_r = i+dr[dir];
+            int new_c = j+dc[dir];
+            if(new_r >= 0 && new_r < rowL && new_c >= 0 && new_c < colL){
+                dfs(grid, new_r, new_c, rowL, colL, visited);
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[][] grid = {{1,1,0,0},
+                        {1,1,0,0},
+                        {0,0,1,1},
+                        {0,0,1,1}};
+        int rowL = grid.length;
+        int colL = grid[0].length;
+        boolean[][] visited = new boolean[rowL][colL];
+        int components=0;
+        
+        for(int i=0; i<rowL; i++){
+            for(int j=0; j<colL; j++){
+                if(!visited[i][j] && grid[i][j] == 1){
+                    dfs(grid,i,j,rowL,colL,visited);
+                    components++;
+                }
+            }
+        }
+        
+        System.out.println("Total number of components (total dfs): "+ components);
+    }
+}
