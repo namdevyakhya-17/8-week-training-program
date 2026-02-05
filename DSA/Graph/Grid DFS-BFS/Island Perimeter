@@ -5,7 +5,7 @@ class Solution {
     int[] dc = {0,0,-1,1};
 
     public int dfs(int[][] grid, int r, int c){
-        if(r < 0 || c < 0 || r >= n || c >= m || grid[r][c] == 0) return 1;
+        if(r < 0 || c < 0 || r >= n || c >= m || grid[r][c] == 0) return 1; 
         if(grid[r][c] == -1) return 0;
         grid[r][c] = -1;   // marking as visited
         int sides = 0;
