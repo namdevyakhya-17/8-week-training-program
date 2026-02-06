@@ -1,0 +1,50 @@
+import java.util.*;
+class WallAndGates {
+    static int[] dr = {-1,1,0,0};
+    static int[] dc = {0,0,-1,1};
+    static int INF = (int)Math.pow(2, 31)-1;
+    public static void bfs(int[][] grid) {
+        int n = grid.length;
+        Queue<int[]> q = new LinkedList<>();
+        boolean[][] visited = new boolean[n][n];
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(grid[i][j] == 0){
+                    q.add(new int[]{i,j,0});
+                }
+            }
+        }
+
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i=0; i<size; i++){
+                int[] cur = q.poll();
+                for(int k=0; k<4; k++){
+                    int nr = cur[0]+dr[k];
+                    int nc = cur[1]+dc[k];
+                    if(nr >=0 && nr < n && nc >= 0 && nc < n && grid[nr][nc] == INF && !visited[nr][nc]){
+                        visited[nr][nc] = true;
+                        q.add(new int[]{nr,nc,cur[2]+1});
+                        grid[nr][nc] = cur[2]+1;
+                    }
+                }
+            }
+        }
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        int[][] grid = {{INF,-1,0,INF},
+                        {INF,INF,INF,-1},
+                        {INF,-1,INF,-1},
+                        {0,-1,INF,INF}};
+        bfs(grid);
+    }
+}
