@@ -1,0 +1,80 @@
+// BFS 
+class Party {
+    public static void bfs(ArrayList<ArrayList<Integer>> graph) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(0);
+
+        int count = 0;
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+
+            for (int i = 0; i < size; i++) {
+                int cur = q.poll();
+                for (int v : graph.get(cur)) {
+                    q.add(v);
+                }
+            }
+            count++;
+        }
+        System.out.println(count - 1);  // 1 extra count for dummy node = 0 (as we are creating the 0th index as starting point)
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        for (int i = 1; i <= n; i++) {
+            int val = sc.nextInt();
+            if (val == -1) val = 0;
+            graph.get(val).add(i);
+        }
+
+        sc.close();
+        findGroups(graph);
+    }
+}
+
+
+// DFS
+class Party {
+    static int ans = 0; 
+    public static void dfs(int src, ArrayList<ArrayList<Integer>> graph, int depth){
+        ans = Math.max(ans,depth);
+        for(int child: graph.get(src)){
+            dfs(child,graph,depth+1);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        // DFS
+        int[] parent = new int[n+1];
+        for(int i=1; i<=n; i++){
+            parent[i] = sc.nextInt();
+            if(parent[i]!= -1){
+                graph.get(parent[i]).add(i);
+            }
+        }
+        
+        for(int i=1; i<=n; i++){
+            if(parent[i] == -1){
+                dfs(i,graph,1);
+            }
+        }
+        System.out.println(ans);
+        sc.close();        
+    }
+}
