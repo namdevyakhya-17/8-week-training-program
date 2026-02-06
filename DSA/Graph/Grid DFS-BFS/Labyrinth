@@ -1,0 +1,111 @@
+import java.util.*;
+public class Labyrinth {
+    static int n;
+    static int m;
+    static int dr[] = {-1,1,0,0};
+    static int dc[] = {0,0,-1,1};
+    static char[] dir = {'U','D','L','R'};
+    static char[][] parent;
+    static class Pair{
+        int i;
+        int j;
+        public Pair(int i, int j){
+            this.i=i;
+            this.j=j;
+        }
+    }
+    public static void bfs(char[][] lab, int i, int j){
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(i,j));
+        boolean[][] visited = new boolean[n][m];
+        visited[i][j] = true;
+        int di = -1, dj = -1;
+        parent[i][j] = '.';
+
+        while(!q.isEmpty()){
+            Pair p = q.poll();
+            
+            for(int l=0; l<4; l++){
+                int nr = p.i+dr[l];
+                int nc = p.j+dc[l];
+                if(nr >= 0 && nr < n && nc >= 0 && nc < m && !visited[nr][nc] && (lab[nr][nc] == '.' || lab[nr][nc] == 'B')){
+                    visited[nr][nc] = true;
+                    q.add(new Pair(nr,nc));
+                    parent[nr][nc] = dir[l];
+                    if(lab[nr][nc] == 'B'){
+                        di = nr;
+                        dj = nc;
+                        break;
+                    }
+                }                
+            }
+            if(di != -1) break;
+        }
+
+        if(di != -1 && dj != -1){
+            System.out.println("YES");
+            findPath(di,dj);
+        }else{
+            System.out.println("NO");
+        }
+
+        
+        // for(int k=0; k<n; k++){
+        //     for(int l=0; l<m; l++){
+        //         System.out.print(parent[k][l] + " ");
+                
+        //     }
+        //     System.out.println();
+        // }
+
+        
+    }
+
+    public static void findPath(int di, int dj){
+        StringBuilder path = new StringBuilder();
+        int r=di, c=dj;
+        while(parent[r][c] != '.'){
+            char dir = parent[r][c];
+            path.append(dir);
+
+            if(dir == 'U') r++;
+            else if(dir == 'D') r--;
+            else if(dir == 'L') c++;
+            else if(dir == 'R') c--;
+        }
+
+        System.out.println(path.length());
+        System.out.println(path.reverse().toString());
+    }
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        n = sc.nextInt();
+        m = sc.nextInt();
+        char[][] lab = new char[n][m];
+        for(int i=0; i<n; i++){
+            String row = sc.next();
+            for(int j=0; j<m; j++){
+                lab[i][j] = row.charAt(j);
+            }
+        }
+
+        parent = new char[n][m];
+        int si = -1, sj = -1;
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(lab[i][j] == 'A'){
+                    si = i;
+                    sj = j;
+                }
+            }
+        }
+
+        if(si != -1){
+            bfs(lab, si, sj);
+        }else{
+            System.out.println("NO");
+        }
+        sc.close();
+    }
+}
