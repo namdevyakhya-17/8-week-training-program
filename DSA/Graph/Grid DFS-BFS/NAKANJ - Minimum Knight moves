@@ -1,0 +1,63 @@
+import java.util.*;
+
+public class Nakanj {
+    static int[] drow = {-2,-2,2,2,-1,1,-1,1};
+    static int[] dcol = {1,-1,-1,1,-2,2,-2,2};
+    public static void findSteps(int sr, int sc, int dr, int dc){
+        int n = 8;
+        int m = 8;
+        Queue<int[]> q = new LinkedList<>();
+        boolean[][] visited = new boolean[n][m];
+        q.add(new int[]{sr,sc,0});
+        visited[sr][sc] = true;
+
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            if(cur[0] == dr && cur[1] == dc){
+                System.out.println(cur[2]);
+                return;
+            }
+            for(int i=0; i<8; i++){
+                int nr = cur[0] + drow[i];
+                int nc = cur[1] + dcol[i];
+                if(nr >= 0 && nr < n  && nc >=0 && nc < m && !visited[nr][nc]){
+                    visited[nr][nc] = true;
+                    q.add(new int[]{nr,nc,cur[2]+1});
+                }
+            }
+        }
+
+    }
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        int t = s.nextInt();
+        while(t-- > 0){
+            String start = s.next();
+            String dest = s.next();
+            int sc = start.charAt(1)-'0' - 1;
+            int dc = dest.charAt(1)-'0' - 1;
+            int sr = 0;
+            int dr = 0;
+            if(start.charAt(0) == 'a') sr = 0;
+            else if(start.charAt(0) == 'b') sr = 1;
+            else if(start.charAt(0) == 'c') sr=2;
+            else if(start.charAt(0) == 'd') sr=3;
+            else if(start.charAt(0) == 'e') sr=4;
+            else if(start.charAt(0) == 'f') sr=5;
+            else if(start.charAt(0) == 'g') sr=6;
+            else if(start.charAt(0) == 'h') sr=7;
+            
+            if(dest.charAt(0) == 'a') dr = 0;
+            else if(dest.charAt(0) == 'b') dr = 1;
+            else if(dest.charAt(0) == 'c') dr=2;
+            else if(dest.charAt(0) == 'd') dr=3;
+            else if(dest.charAt(0) == 'e') dr=4;
+            else if(dest.charAt(0) == 'f') dr=5;
+            else if(dest.charAt(0) == 'g') dr=6;
+            else if(dest.charAt(0) == 'h') dr=7;
+
+            findSteps(sr,sc,dr,dc);
+        }
+        s.close();
+    }
+}
