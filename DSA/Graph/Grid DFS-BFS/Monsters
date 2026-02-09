@@ -1,0 +1,131 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Monsters {
+    static int[] dr = {-1,1,0,0};
+    static int[] dc = {0,0,-1,1};
+    static char[] dir = {'U','D','L','R'};
+
+    public static void findPath(char[][] parent, int di, int dj){
+        StringBuilder path = new StringBuilder();
+        int r=di, c=dj;
+        while(parent[r][c] != '.'){
+            char dir = parent[r][c];
+            path.append(dir);
+
+            if(dir == 'U') r++;
+            else if(dir == 'D') r--;
+            else if(dir == 'L') c++;
+            else if(dir == 'R') c--;
+        }
+
+        System.out.println(path.length());
+        System.out.println(path.reverse().toString());
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        char[][] grid = new char[n][m];
+        boolean[][] vis = new boolean[n][m];
+        boolean[][] visP = new boolean[n][m];
+        char[][] parent = new char[n][m];
+        int[][] disM = new int[n][m];
+        int[][] disP = new int[n][m];
+        for(int[] row: disM){
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                parent[i][j] = '.';
+            }
+        }
+
+        Queue<int[]>mQ = new LinkedList<>();
+        Queue<int[]>pQ = new LinkedList<>();
+        int pr=-1, pc=-1;
+        for(int i=0; i<n; i++){
+            String s = br.readLine();
+            for(int j=0; j<m; j++){
+                grid[i][j] = s.charAt(j);
+                if(grid[i][j] == 'M'){
+                    mQ.offer(new int[]{i,j});
+                    disM[i][j] = 0;
+                }
+                if(grid[i][j] == 'A'){
+                    pr=i; pc=j;
+                    disP[i][j] = 0;
+                    pQ.offer(new int[]{i,j});
+                }
+            }
+        }
+
+        // update monster distance to neighbour cells
+        while(!mQ.isEmpty()){
+            int[] cur = mQ.poll();
+            int r = cur[0];
+            int c = cur[1];
+            int dis = disM[r][c];
+            
+            for(int i=0; i<4; i++){
+                int nr = r+dr[i];
+                int nc = c+dc[i];
+                if(nr>=0 && nr<n && nc>=0 && nc<m && !vis[nr][nc] && grid[nr][nc] == '.' && dis+1 < disM[nr][nc]){
+                    disM[nr][nc] = 1+dis;
+                    vis[nr][nc] = true;
+                    mQ.add(new int[]{nr,nc});
+                }
+            }
+        }
+
+        // for (int i = 0; i < disM.length; i++) {
+        //     for (int j = 0; j < disM[0].length; j++) {
+        //         System.out.print(disM[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
+
+        // updating player distance now
+        int er=-1, ec=-1;
+        while(!pQ.isEmpty()){
+            int[] cur = pQ.poll();
+            int r = cur[0];
+            int c = cur[1];
+            int dis = disP[r][c];
+            
+            if(r == 0 || c == 0 || r == n-1 || c == m-1){   // checking if player has reached to the boundary
+                er = r;
+                ec = c;
+                break;
+            }
+            for(int i=0; i<4; i++){
+                int nr = r+dr[i];
+                int nc = c+dc[i];
+                if(nr>=0 && nr<n && nc>=0 && nc<m && !visP[nr][nc] && grid[nr][nc] == '.' && dis+1 < disM[nr][nc] ){
+                    disP[nr][nc] = 1+dis;
+                    visP[nr][nc] = true;
+                    pQ.add(new int[]{nr,nc});
+                    parent[nr][nc] = dir[i];
+                }
+            }
+        }
+
+        // for (int i = 0; i < disP.length; i++) {
+        //     for (int j = 0; j < disP[0].length; j++) {
+        //         System.out.print(disP[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
+
+        if(er == -1 && ec == -1){
+            System.out.println("NO");
+        }else{
+            System.out.println("YES");
+            findPath(parent, er, ec);
+        }
+    }
+}
