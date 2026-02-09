@@ -30,11 +30,11 @@ public class Monsters {
         int n = Integer.parseInt(st.nextToken());
         int m = Integer.parseInt(st.nextToken());
         char[][] grid = new char[n][m];
-        boolean[][] vis = new boolean[n][m];
-        boolean[][] visP = new boolean[n][m];
-        char[][] parent = new char[n][m];
-        int[][] disM = new int[n][m];
-        int[][] disP = new int[n][m];
+        boolean[][] vis = new boolean[n][m];  // visited for monsters
+        boolean[][] visP = new boolean[n][m]; // visited for player
+        char[][] parent = new char[n][m];   // to track the moving directions of player
+        int[][] disM = new int[n][m];   // store distance of monster
+        int[][] disP = new int[n][m];   // store distance of player
         for(int[] row: disM){
             Arrays.fill(row, Integer.MAX_VALUE);
         }
