@@ -51,3 +51,60 @@ class Solution {
         return sb.length() != graph.size() ? "" : sb.toString();
     }
 }
+
+
+// Method 2
+class Solution {
+    public String findOrder(String[] words) {
+        // code here
+        ArrayList<ArrayList<Integer>> adj=new ArrayList<>();
+        for(int i=0;i<26;i++){
+            adj.add(new ArrayList<>());
+        }
+        int[] indegree=new int[26];
+        Arrays.fill(indegree,-1);
+        for(String word:words){
+            for(char ch:word.toCharArray()){
+                indegree[ch-'a']=0;
+            }
+        }
+        for(int i=0;i<words.length-1;i++){
+            String word1=words[i];
+            String word2=words[i+1];
+            if (word1.startsWith(word2) && word1.length() > word2.length())
+            return "";
+            for(int k=0;k<Math.min(word1.length(),word2.length());k++){
+                char w1=word1.charAt(k);
+                char w2 =word2.charAt(k);
+                if(w1!=w2){
+                    adj.get(w1-'a').add(w2-'a');
+                    indegree[w2-'a']++;
+                    break;
+                }
+            }
+        }
+        Queue<Integer> q=new LinkedList<>();
+        int count=0;
+        for(int i=0;i<26;i++){
+            if(indegree[i]==0){
+                q.offer(i);
+            }
+            if(indegree[i]!=-1){
+                count++;
+            }
+        }
+        StringBuilder sb=new StringBuilder();
+        while(!q.isEmpty()){
+            int curr=q.poll();
+            sb.append((char)(curr+'a'));
+            for(int j=0;j<adj.get(curr).size();j++){
+                indegree[adj.get(curr).get(j)]-=1;
+                if(indegree[adj.get(curr).get(j)]==0){
+                    q.offer(adj.get(curr).get(j));
+                }
+            }
+        }
+        return (sb.length()==count)?sb.toString():"";
+        
+    }
+}
