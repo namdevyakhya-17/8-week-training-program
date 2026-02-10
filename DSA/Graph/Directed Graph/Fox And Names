@@ -1,0 +1,67 @@
+// Online Java Compiler
+// Use this editor to write, compile and run your Java code online
+import java.util.*;
+class Main {
+    public static String findOrder(String[] words) {
+        HashMap<Character, ArrayList<Character>> graph = new HashMap<>();
+        HashMap<Character, Integer> indegree = new HashMap<>();
+    
+        for(char ch='a'; ch<='z'; ch++){
+            graph.putIfAbsent(ch,new ArrayList<>());
+            indegree.putIfAbsent(ch,0);
+        }
+        
+        for(int i=0; i<words.length-1; i++){
+            String word1 = words[i];
+            String word2 = words[i+1];
+            if(word1.startsWith(word2) && word1.length() > word2.length()) return "Impossible";
+            
+            int len = Math.min(word1.length(), word2.length());
+            for(int j=0; j<len; j++){
+                if(word1.charAt(j) != word2.charAt(j)){
+                    graph.get(word1.charAt(j)).add(word2.charAt(j));
+                    indegree.put(word2.charAt(j), indegree.getOrDefault(word2.charAt(j),0)+1);
+                    
+                    break;
+                }
+            }
+            
+        }
+        
+        Queue<Character> q = new LinkedList<>();
+        for(Character ch : graph.keySet()){
+            if(indegree.get(ch) == 0){
+                q.add(ch);
+            }
+        }
+        
+        
+        StringBuilder sb = new StringBuilder();
+        while(!q.isEmpty()){
+            char ch = q.poll();
+            sb.append(ch);
+            
+            for(char adjCh: graph.get(ch)){
+                indegree.put(adjCh, indegree.get(adjCh)-1);
+                if(indegree.get(adjCh) == 0){
+                    q.add(adjCh);
+                }
+            }
+        }
+        // System.out.println(sb.toString()+ " " + sb.length());
+        return sb.length() != graph.size() ? "Imposible" : sb.toString();
+    }
+    public static void main(String[] args) {
+        // // String[] words = {"car","care","careful","carefully","becarefuldontforgetsomething","otherwiseyouwillbehacked","goodluck"};
+        //  String[] words = {"tourist","petr","wjmzbmr","yeputons","vepifanov","scottwu","oooooooooooooooo","subscriber","rowdark","tankengineer"};
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        String[] words = new String[n];
+        for(int i=0; i<n; i++){
+            words[i] = sc.next();
+        }
+        sc.close();
+        String ans = findOrder(words);
+        System.out.println(ans);
+    }
+}
