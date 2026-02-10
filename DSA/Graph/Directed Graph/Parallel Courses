@@ -1,0 +1,39 @@
+import java.util.*;
+class Solution {
+    public static int topoSort(int V, int[][] edges) {
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for(int i=0; i<=V; i++){
+            graph.add(new ArrayList<>());
+        }
+        
+        int[] indegree = new int[V+1];
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            indegree[v]++;
+            graph.get(u).add(v);
+        }
+        
+        Queue<int[]> q = new LinkedList<>();
+        for(int i=0; i<=V; i++){
+            if(indegree[i] == 0) q.add(new int[]{i,1}); 
+        }
+        
+        int sem = -1;
+        while(!q.isEmpty()){
+            int[] curCourse = q.poll();
+            int cur = curCourse[0];
+            int temp = curCourse[1];
+            sem = Math.max(sem, temp);
+            
+            for(int v: graph.get(cur)){
+                indegree[v]--;
+                if(indegree[v] == 0){
+                    q.add(new int[]{v,temp+1});
+                }
+            }
+        }
+        
+        return sem != V-1 ? -1 : sem;
+    }
+}
