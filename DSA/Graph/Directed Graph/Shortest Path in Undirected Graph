@@ -1,0 +1,40 @@
+class Solution {
+    public int[] shortestPath(int V, int[][] edges, int src) {
+        ArrayList<ArrayList<Integer>> graph =  new ArrayList<>();
+        for(int i=0; i<V; i++){
+            graph.add(new ArrayList<>());
+        }
+        
+        for(int[] edge: edges){
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
+        }
+        
+        boolean[] visited = new boolean[V];
+        int[] dist = new int[V];
+        
+        dist[src] = 0;
+        visited[src] = true;
+        Queue<Integer> q = new LinkedList<>();
+        q.add(src);
+        
+        while(!q.isEmpty()){
+            int cur = q.poll();
+            for(int v: graph.get(cur)){
+                if(!visited[v]){
+                    visited[v] = true;
+                    dist[v] = dist[cur]+1;
+                    q.add(v);
+                }
+            }
+        }
+        
+        for(int i=0; i<dist.length; i++){
+            if(dist[i] == 0 && i != src){
+                dist[i] = -1;
+            }
+        }
+        
+        return dist;
+    }
+}
