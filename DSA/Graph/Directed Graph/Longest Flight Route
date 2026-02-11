@@ -1,0 +1,73 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.*;
+
+public class LongestFlightRoute {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());   // to read the first whole line at once, converted it into tokens
+
+        int n = Integer.parseInt(st.nextToken());  // number of cities
+        int m = Integer.parseInt(st.nextToken());  // number of flights
+        int[] indegree = new int[n+1];
+        int[] parent = new int[n+1];
+        Arrays.fill(parent, -1);
+        int[] countCities = new int[n+1];
+        countCities[1] = 1;
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for(int i=0; i<=n; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i=0; i<m; i++){
+            st = new StringTokenizer(br.readLine());  // for reading whole line of input and converting it into tokens
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            graph.get(u).add(v);
+            indegree[v]++;
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=1; i<=n; i++){
+            if(indegree[i] == 0){
+                q.add(i);
+            }
+        }
+
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+            int dis = countCities[cur];
+            for(int v: graph.get(cur)){
+                if(dis > 0 && 1+dis > countCities[v]){
+                    parent[v] = cur;
+                    countCities[v] = 1+dis;
+                }
+                indegree[v]--;
+                if(indegree[v] == 0) q.offer(v);
+            }
+        }
+
+        // System.out.println(Arrays.toString(countCities));
+        // System.out.println(Arrays.toString(parent));
+        if(countCities[n] == 0){
+            System.out.println("IMPOSSIBLE");
+            return;
+        }
+
+        // finding path
+        ArrayList<Integer> path = new ArrayList<>();
+        for(int i=n; i != -1; i=parent[i]){
+            path.add(i);
+        }
+
+        Collections.reverse(path);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(path.size() + "\n");
+        for(int val: path){
+            bw.write(val + " ");
+        }
+        bw.flush();
+    }
+}
