@@ -1,0 +1,48 @@
+class Solution {
+    class Pair{
+        String word;
+        int state;
+        public Pair(String word, int state){
+            this.word = word;
+            this.state = state;
+        }
+    }
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        HashSet<String> set = new HashSet<>(wordList);
+        // for(String word: wordList){
+        //     set.add(word);
+        // }
+        if(beginWord == endWord || !set.contains(endWord)){
+            return 0;
+        }
+
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(beginWord,1));
+        set.remove(beginWord);
+
+        while(!q.isEmpty()){
+            Pair pair = q.poll();
+            String curWord = pair.word;
+            int curState = pair.state;
+            if(curWord.equals(endWord)){
+                return curState;
+            }
+
+            int len = curWord.length();
+            for(int i=0; i<len; i++){
+                char[] ch = curWord.toCharArray();
+                for(char c='a'; c<='z'; c++){
+                    if(ch[i] == c) continue; // if both are equal chars
+                    ch[i] = c;
+                    String temp = new String(ch);
+                    if(set.contains(temp)){
+                        set.remove(temp);
+                        q.add(new Pair(temp, curState+1));
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+}
