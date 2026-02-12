@@ -1,0 +1,69 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.*;
+class Pair{
+    int dest;
+    long cost;
+    public Pair(int dest, long cost){
+        this.dest = dest;
+        this.cost = cost;
+    }
+}
+class ShortestRoute {
+    public static void dijkstra(int V, ArrayList<ArrayList<Pair>> graph , int src) throws Exception{
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b) -> Long.compare(a.cost, b.cost));
+        long[] dist = new long[V+1];
+        Arrays.fill(dist, Long.MAX_VALUE);
+        dist[src] = 0;
+        
+        pq.add(new Pair(src,0));
+        
+        while(!pq.isEmpty()){
+            Pair p = pq.poll();
+            int u = p.dest;
+            long cost_u = p.cost;
+            
+            if(cost_u > dist[u]) continue; // most important line, decrease key via lazy relation
+            for(Pair pair : graph.get(u)){
+                int v = pair.dest;
+                long c = pair.cost;
+                if(dist[u]+c < dist[v]){
+                    dist[v] = dist[u]+c;
+                    pq.add(new Pair(v, dist[v]));
+                }
+            }
+            
+            
+        }
+        
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        for(int i=1; i<dist.length; i++){
+            bw.write(dist[i] + " ");
+        }
+        bw.flush();
+    }
+
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        ArrayList<ArrayList<Pair>> graph = new ArrayList<>();
+        for(int i=0; i<=n; i++){
+            graph.add(new ArrayList<>());
+        }
+
+        for(int i=1; i<=m; i++){
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            graph.get(u).add(new Pair(v, w));
+        }
+
+        dijkstra(n, graph, 1);
+    }
+}
