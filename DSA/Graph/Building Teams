@@ -1,0 +1,65 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.*;
+
+public class BuildingTeams {
+    public static boolean bfs(ArrayList<ArrayList<Integer>> graph, boolean[] visited, int node, int[] team){
+        Queue<Integer> q = new LinkedList<>();
+        q.add(node);
+        visited[node] = true;
+
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+            for(int v: graph.get(cur)){
+                if(visited[v] && team[v] == team[cur]){
+                    return false;
+                }
+                if(!visited[v]){
+                    visited[v] = true;
+                    team[v] = team[cur] == 1 ? 2 : 1;
+                    q.add(v);
+                }
+            }
+        }
+        return true;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i <= n; i++)
+            graph.add(new ArrayList<>());
+
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+        int[] team = new int[n+1];
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        boolean[] visited = new boolean[n+1];
+        for(int i=1; i<=n; i++){
+            if(!visited[i]){
+                team[i] = 1;
+                if(!bfs(graph, visited, i, team)){
+                    bw.write("IMPOSSIBLE");
+                    bw.flush();
+                    return;
+                }
+            }
+        }
+
+        
+        for(int i=1; i<=n; i++){
+            bw.write(team[i] + " ");
+        }
+        bw.flush();
+    }
+}
