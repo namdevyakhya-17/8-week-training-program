@@ -1,0 +1,85 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.*;
+
+public class FlightDiscount {
+    static class Pair{
+        int node;
+        long cost;
+        Pair(int node, long cost){
+            this.node = node;
+            this.cost = cost;
+        }
+    }
+
+    static class State{
+        int node;
+        long cost;
+        int isUsed;  // coupon used => 1, not used => 0
+        State(int node, long cost, int isUsed){
+            this.node = node;
+            this.cost = cost;
+            this.isUsed = isUsed;
+        }
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        ArrayList<ArrayList<Pair>> graph = new ArrayList<>();
+        for(int i=0; i<=n; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i=0; i<m; i++){
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            graph.get(u).add(new Pair(v, w));
+        }
+
+        PriorityQueue<State> pq = new PriorityQueue<>((a,b) -> Long.compare(a.cost, b.cost));
+        long[][] dist = new long[n+1][2];  // size 2 col for 1 col is coupon is used and 2 col is coupon is not used
+        pq.add(new State(1, 0,0));
+        for(int i=0; i<dist.length; i++){
+            Arrays.fill(dist[i], Long.MAX_VALUE);
+        }
+        dist[1][0] = 0;   // when coupon is not used at src node
+
+        while (!pq.isEmpty()) {
+            State state = pq.poll();
+            int u = state.node;
+            long c = state.cost;
+            int used = state.isUsed;
+            
+            if(dist[u][used] < c) continue;
+            for(Pair p : graph.get(u)){
+                int v = p.node;
+                long costu_v = p.cost;
+                // case 1 :-  when coupon is not used
+                if(c+costu_v < dist[v][used]){
+                    dist[v][used] = c+costu_v;
+                    pq.add(new State(v, dist[v][used], used));
+                }
+
+
+                // case 2 :- using coupon
+                if(used == 0){
+                    long cost = costu_v/2;
+                    if(c+cost < dist[v][1]){
+                        dist[v][1] = c+cost;
+                        pq.add(new State(v, dist[v][1],1));  // marked as coupn used
+                    }
+                }
+            }
+        }
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(dist[n][1] + " ");
+        bw.flush();
+    }
+}
