@@ -1,0 +1,64 @@
+import java.util.*;
+import java.io.*;
+
+public class MessageRoute {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for(int i=0; i<=n; i++){
+            graph.add(new ArrayList<>());
+        }
+
+        for(int i=0; i<m; i++){
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());   
+            int v = Integer.parseInt(st.nextToken());
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+        boolean[] visited = new boolean[n+1];
+        Queue<Integer> q = new LinkedList<>();
+        int[] parent = new int[n+1];
+        int[] nodes = new int[n+1];
+        Arrays.fill(nodes, Integer.MAX_VALUE);
+        Arrays.fill(parent, -1);
+        nodes[1] = 1;
+        visited[1] = true;
+        q.add(1);
+
+        while(!q.isEmpty()){
+            int cur = q.poll();
+            for(int v : graph.get(cur)){
+                if(!visited[v]){
+                    nodes[v] = Math.min(nodes[v], nodes[cur]+1);
+                    q.add(v);
+                    parent[v] = cur;
+                    visited[v] = true;
+                }
+            }
+        }
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        if(nodes[n] == Integer.MAX_VALUE){
+            bw.write("IMPOSSIBLE");
+            bw.flush();
+            return;
+        }
+
+        bw.write(nodes[n] + "\n");
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i=n; i!=-1; i=parent[i]){
+            ans.add(i);
+        }
+        Collections.reverse(ans);
+        for(int i=0; i<ans.size(); i++){
+            bw.write(ans.get(i) + " ");
+        }
+        bw.flush();
+    }
+}
