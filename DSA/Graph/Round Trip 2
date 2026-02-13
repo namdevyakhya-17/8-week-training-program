@@ -1,0 +1,75 @@
+import java.util.*;
+import java.io.*;
+
+public class RoundTripTwo {
+    static int start = -1, end = -1;
+    public static boolean cyclic(ArrayList<ArrayList<Integer>> graph, boolean[] visited, boolean[] path, int[] parent, int cur, int src){
+        if(path[cur]){
+            start = cur;
+            end = src;
+            return true;
+        }
+
+        if(visited[cur]){
+            return false;
+        }
+
+        visited[cur] = true;
+        path[cur] = true;
+        parent[cur] = src;
+        for(int dest : graph.get(cur)){
+            if(cyclic(graph, visited, path, parent, dest, cur)){
+                return true;
+            }
+        }
+
+        path[cur] = false;
+        return false;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i <= n; i++)
+            graph.add(new ArrayList<>());
+
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            graph.get(u).add(v);
+        }
+
+        int[] parent = new int[n+1];
+        boolean[] visited = new boolean[n+1];
+        boolean[] path = new boolean[n+1];
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        Arrays.fill(parent, -1);
+        for(int i=1; i<=n; i++){
+            if(!visited[i] && cyclic(graph, visited, path, parent, i, -1)){
+                break;
+            }
+        }
+
+        if(start == -1) {
+            bw.write("IMPOSSIBLE\n");
+            bw.flush();
+            return;
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        ans.add(start);
+        for(int i=end; i != start; i=parent[i]){
+            ans.add(i);
+        }
+        ans.add(start);
+        Collections.reverse(ans);
+
+        bw.write(ans.size() + "\n");
+        for(int i=0; i<ans.size(); i++){
+            bw.write(ans.get(i) + " ");
+        }
+        bw.flush();
+    }
+}
