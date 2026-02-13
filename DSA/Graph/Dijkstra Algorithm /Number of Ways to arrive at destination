@@ -1,0 +1,64 @@
+class Solution {
+    
+    class Pair{
+        int dest;
+        long cost;
+        public Pair(int dest, long cost){
+            this.dest = dest;
+            this.cost = cost;
+        }
+    }
+    
+    public int countPaths(int n, int[][] roads) {
+        
+        ArrayList<ArrayList<Pair>> graph = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            graph.add(new ArrayList<>());
+        }
+
+        for(int[] road: roads){
+            int u = road[0];
+            int v = road[1];
+            int c = road[2];
+            graph.get(u).add(new Pair(v,c));
+            graph.get(v).add(new Pair(u,c));
+        }
+
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b) -> Long.compare(a.cost, b.cost));
+        
+        long[] dist = new long[n];
+        long[] ways = new long[n];
+        long max = Long.MAX_VALUE;
+        int MOD = 1_000_000_007;
+        
+        Arrays.fill(dist, max);
+        dist[0] = 0;
+        ways[0] = 1;
+        
+        pq.add(new Pair(0,0));
+        
+        while(!pq.isEmpty()){
+            Pair p = pq.poll();
+            int u = p.dest;
+            long cost_u = p.cost;
+            
+            if(cost_u > dist[u]) continue;
+            
+            for(Pair pair : graph.get(u)){
+                int v = pair.dest;
+                long c = pair.cost;
+                
+                if(dist[u] + c < dist[v]){
+                    dist[v] = dist[u] + c;
+                    ways[v] = ways[u];   // path with lesser cost found
+                    pq.add(new Pair(v, dist[v]));
+                }
+                else if(dist[u] + c == dist[v]){
+                    ways[v] = (ways[v] + ways[u]) % MOD;  // one more path found
+                }
+            }            
+        }
+        
+        return (int)(ways[n-1] % MOD);
+    }
+}
