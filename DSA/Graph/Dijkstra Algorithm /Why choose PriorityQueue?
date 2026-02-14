@@ -1,0 +1,23 @@
+Dijkstra always needs the node with the minimum distance first.
+** Priority Queue gives: **
+  Insert → O(log n)  
+  Remove min → O(log n)  
+  Always gives smallest distance node
+
+** TreeSet<Pair> **
+  TreeSet can also work because it maintains sorted order and supports decrease-key by removing and re-inserting elements. 
+  However, Priority Queue is simpler and faster in practice due to lower constant overhead.
+
+** Queue **
+A normal Queue processes nodes in FIFO order, not based on minimum distance. 
+This works only for unweighted graphs (BFS), but Dijkstra requires always choosing the minimum distance node.
+
+Queue always removes in insertion order, not smallest distance.
+Even if Pair implements Comparable, queue will NOT automatically reorder elements.
+You insert:
+        (2, 10)
+        (3, 1)
+Queue order: (2,10) → (3,1)
+It will remove (2,10) first ❌
+But Dijkstra needs (3,1) first.
+So implementing Comparable is useless for Queue.
