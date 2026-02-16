@@ -1,0 +1,39 @@
+class Solution {
+    int[] dr = {-1,1,0,0};
+    int[] dc = {0,0,-1,1};
+    int INF = (int)1e9;
+    public int minimumObstacles(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] minRemove = new int[n][m];
+        for(int i=0; i<n; i++){
+            Arrays.fill(minRemove[i], INF);
+        }
+        
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{0,0,grid[0][0]});
+        minRemove[0][0] = grid[0][0];
+
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            int r = cur[0];
+            int c = cur[1];
+            int val = cur[2];
+
+            if(minRemove[r][c] < val) continue;
+            for(int i=0; i<4; i++){
+                int nr = r+dr[i];
+                int nc = c+dc[i];
+                if(nr>=0 && nr<n && nc>=0 && nc<m){
+                    int newVal = val+grid[nr][nc];
+                    if(newVal < minRemove[nr][nc]){
+                        q.add(new int[]{nr,nc,newVal});
+                        minRemove[nr][nc] = newVal;
+                    }
+                }
+            }
+        }
+
+        return minRemove[n-1][m-1];
+    }
+}
