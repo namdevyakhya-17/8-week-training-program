@@ -1,0 +1,43 @@
+class Solution {
+    int[] dr = {-1,1,0,0};
+    int[] dc = {0,0,-1,1};
+    int INF = (int) 1e9;
+    public int shortestPath(int[][] grid, int k) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] minObst = new int[n][m];
+        for(int[] obs: minObst){
+            Arrays.fill(obs, INF);
+        }
+
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{0,0,0,grid[0][0]});
+        minObst[0][0] = grid[0][0];
+
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            int r = cur[0];
+            int c = cur[1];
+            int step = cur[2];
+            int obst = cur[3];
+
+            if(r == n-1 && c == m-1){
+                return step;
+            }
+
+            if(obst > minObst[r][c]) continue;
+            for(int i=0; i<4; i++){
+                int nr = r+dr[i];
+                int nc = c+dc[i];
+                if(nr>=0 && nr<n && nc>=0 && nc<m){
+                    int newObst = obst+grid[nr][nc];
+                    if(newObst <= k && newObst < minObst[nr][nc]){
+                        q.add(new int[]{nr,nc,step+1,newObst});
+                        minObst[nr][nc] = newObst;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+}
