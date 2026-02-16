@@ -1,0 +1,42 @@
+class Solution {
+    int[] dr = {-1,1,0,0};  //(up,down,left,right)
+    int[] dc = {0,0,-1,1};
+    public boolean findSafeWalk(List<List<Integer>> grid, int health) {
+        int n = grid.size();
+        int m = grid.get(0).size();
+
+        int[][] maxHealth = new int[n][m];
+        for(int i=0; i<n; i++){
+            Arrays.fill(maxHealth[i], -1);
+        }
+
+        Queue<int[]> q = new LinkedList<>();
+        int temp = health-grid.get(0).get(0);
+        if(temp <= 0) return false;
+        maxHealth[0][0] = temp;
+        q.add(new int[]{0,0,temp});
+
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            int r = cur[0];
+            int c = cur[1];
+            int val = cur[2];
+            if(r == n-1 && c == m-1){
+                return true;
+            }
+
+            for(int i=0; i<4; i++){
+                int nr = r+dr[i];
+                int nc = c+dc[i];
+                if(nr >= 0 && nr < n && nc >= 0 && nc < m){
+                    int curHealth = val-grid.get(nr).get(nc);
+                    if(curHealth > 0 && curHealth > maxHealth[nr][nc]){
+                        q.add(new int[]{nr, nc, curHealth});
+                        maxHealth[nr][nc] = curHealth;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}
