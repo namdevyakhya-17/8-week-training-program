@@ -1,0 +1,48 @@
+class Solution {
+    int[] parent;
+    int[] rank;
+    public void init(int n){
+        parent = new int[n];
+        rank = new int[n];
+        Arrays.fill(rank, 0);
+        for(int i=0; i<n; i++){
+            parent[i] = i;
+        }
+    }
+
+    public int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y) return false;
+        if(rank[par_x] > rank[par_y]){
+            parent[par_y] = par_x;
+        }else if(rank[par_x] > rank[par_y]){
+            parent[par_x] = par_y;
+        }else{
+            rank[par_y]++;
+            parent[par_x] = par_y;
+        }
+        return true;
+    }
+    public int findCircleNum(int[][] isConnected) {
+        init(isConnected.length+1);
+        for(int i=1; i<=isConnected.length; i++){
+            for(int j=1; j<=isConnected[0].length; j++){
+                if(i!=j && isConnected[i-1][j-1] == 1){
+                    union(i,j);
+                }
+            }
+        }
+
+        HashSet<Integer> set = new HashSet<>();
+        for(int par: parent){
+            set.add(par);
+        }
+        return set.size()-1;
+    }
+}
