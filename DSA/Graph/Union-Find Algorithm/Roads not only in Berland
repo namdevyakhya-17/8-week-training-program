@@ -1,0 +1,78 @@
+import java.util.*;
+import java.io.*;
+
+public class RoadsnotonlyinBerland{
+    static int[] parent;
+    static int[] rank;
+    static int count;
+    static ArrayList<List<Integer>> remove;
+    public static void init(int n){
+        parent = new int[n];
+        rank = new int[n];
+        Arrays.fill(rank,0);
+        for(int i=1; i<n; i++){
+            parent[i] = i;
+        }
+        count = 0;
+        remove = new ArrayList<>();
+    }
+
+    public static int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public static boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y){
+            count++;
+            remove.add(Arrays.asList(x, y));
+            return false;
+        }
+        if(rank[par_x] > rank[par_y]){
+            parent[par_y] = par_x;
+        }else if(rank[par_x] < rank[par_y]){
+            parent[par_x] = par_y;
+        }else{
+            parent[par_x] = par_y;
+            rank[par_y]++;
+        }
+
+        return true;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        init(n+1);
+        for(int i=0; i<n-1; i++){
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            union(a,b);
+        }
+
+        ArrayList<Integer> ans = new ArrayList<>();
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        for(int i=1; i<parent.length; i++){
+            if(parent[i] == i){
+                ans.add(i);
+            }
+        }
+        if(count > 0 && ans.size() != 0){
+            bw.write(count + "\n");
+            for(int i=1; i<ans.size(); i++){
+                int r1 = remove.get(i-1).get(0);
+                int r2 = remove.get(i-1).get(1);
+                int a1 = ans.get(i-1);
+                int a2 = ans.get(i);
+                bw.write(r1 + " " + r2 + " " + a1 + " "+ a2 + "\n");
+            }
+        }else{
+            bw.write("0");
+        }
+
+        bw.flush();
+    }
+}
