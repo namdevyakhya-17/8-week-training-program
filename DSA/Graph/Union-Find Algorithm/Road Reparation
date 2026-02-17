@@ -1,0 +1,71 @@
+import java.util.*;
+import java.io.*;
+
+public class RoadRepetition {
+    static int[] parent;
+    static int[] rank;
+    public static void init(int n){
+        parent = new int[n];
+        rank = new int[n];
+        Arrays.fill(rank, 0);
+        for(int i=0; i<n; i++){
+            parent[i] = i;
+        }
+    }
+
+    public static int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public static boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y) return false;
+        if(rank[par_x] > rank[par_y]){
+            parent[par_y] = par_x;
+        }else if(rank[par_x] < rank[par_y]){
+            parent[par_x] = par_y;
+        }else{
+            rank[par_y]++;
+            parent[par_x] = par_y;
+        }
+        return true;
+    }
+    public static void main(String[] args) throws Exception{
+        // Using krushkal's algo
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        PriorityQueue<long[]> q = new PriorityQueue<>((a,b) -> Long.compare(a[2],b[2]));
+        init(n+1);
+        long cost = 0;
+        for(int i=0; i<m; i++){
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            long w = Long.parseLong(st.nextToken());
+            q.add(new long[]{u,v,w});
+        }
+        
+        int edge = 0;
+        while(!q.isEmpty()){  
+            long[] cur = q.poll();
+            if(union((int)cur[0],(int)cur[1])){
+                cost += cur[2];
+                edge++;
+            }
+        }
+        
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        if(edge != n-1){
+            bw.write("IMPOSSIBLE");
+        }else{
+            bw.write(cost + " ");
+        }
+        bw.flush();
+    }
+}
