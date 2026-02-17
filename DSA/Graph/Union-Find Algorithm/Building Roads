@@ -1,0 +1,70 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class BuildingRoadss {
+    static int[] parent;
+    static int[] rank;
+    public static void init(int n){
+        parent = new int[n];
+        rank = new int[n];
+        Arrays.fill(rank, 0);
+        for(int i=0; i<n; i++){
+            parent[i] = i;
+        }
+    }
+
+    public static int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public static boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y) return false;
+        if(rank[par_x] > rank[par_y]){
+            parent[par_y] = par_x;
+        }else if(rank[par_x] > rank[par_y]){
+            parent[par_x] = par_y;
+        }else{
+            rank[par_y]++;
+            parent[par_x] = par_y;
+        }
+        return true;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        init(n+1);
+        for(int i=0; i<m; i++){
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            union(u, v);
+        }
+        int count = 0;
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i=1; i<=n; i++){
+            if(i == parent[i]){
+                count++;
+                ans.add(i);
+            }
+        }
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(count-1 + "\n");
+        for(int i=1; i<ans.size(); i++){
+            bw.write(ans.get(i-1) + " " + ans.get(i) + "\n");
+        }
+        bw.flush();
+    }
+}
