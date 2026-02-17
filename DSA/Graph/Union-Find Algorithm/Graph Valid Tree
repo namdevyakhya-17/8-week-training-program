@@ -23,11 +23,11 @@ class Solution {
         if(par_x == par_y) return false;
         if(size[par_x] > size[par_y]){
             parent[par_y] = par_x;
-            size[par_x]++;
+            size[par_x]+=size[par_y];
             maxSize = Math.max(maxSize, size[par_x]);
         }else if(size[par_x] > size[par_y]){
             parent[par_x] = par_y;
-            size[par_y]++;
+            size[par_y]+=size[par_x];
             maxSize = Math.max(maxSize, size[par_y]);
         }else{
             size[par_y]+=size[par_x];
