@@ -1,0 +1,50 @@
+class Solution {
+    int[] parent;
+    int[] size;
+    int maxSize;
+    public void init(int n){
+        parent = new int[n];
+        size = new int[n];
+        Arrays.fill(size, 1);
+        for(int i=0; i<n; i++){
+            parent[i] = i;
+        }
+        maxSize = -1;
+    }
+
+    public int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y) return false;
+        if(size[par_x] > size[par_y]){
+            parent[par_y] = par_x;
+            size[par_x]++;
+            maxSize = Math.max(maxSize, size[par_x]);
+        }else if(size[par_x] > size[par_y]){
+            parent[par_x] = par_y;
+            size[par_y]++;
+            maxSize = Math.max(maxSize, size[par_y]);
+        }else{
+            size[par_y]+=size[par_x];
+            parent[par_x] = par_y;
+            maxSize = Math.max(maxSize, size[par_y]);
+        }
+        return true;
+    }
+
+    public boolean validTree(int n, int[][] edges) {
+        if(n == 1 && edges.length == 0) return true;
+        init(n);
+        for(int[] edge: edges){
+            int a = edge[0];
+            int b = edge[1];
+            if(union(a,b) == false) return false;
+        }
+        return maxSize == n;
+    }
+}
