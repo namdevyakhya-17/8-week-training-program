@@ -1,0 +1,90 @@
+class Solution {
+    int[] parent;
+    int[] rank;
+    int component;
+    public void init(int n){
+        parent = new int[n];
+        rank = new int[n];
+        Arrays.fill(rank,0);
+        for(int i=0; i<n; i++){
+            parent[i] = i;
+        }
+        component = n;
+    }
+
+    public int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y) return false;
+        if(rank[par_x] > rank[par_y]){
+            parent[par_y] = par_x;
+        }else if(rank[par_x] < rank[par_y]){
+            parent[par_x] = par_y;
+        }else{
+            parent[par_x] = par_y;
+            rank[par_y]++;
+        }
+        return true;
+    }
+
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        HashMap<String, Integer> emailToId = new HashMap<>();  // providing unique id to every mail
+        HashMap<String, String> emailToName = new HashMap<>(); // associationg name of email with its account name
+        int id = 0;
+
+        // Step1:- Assigning id & name to each mail
+        for(List<String> acc : accounts){
+            String name = acc.get(0);
+            for(int i=1; i<acc.size(); i++){
+                String mail = acc.get(i);
+                if(!emailToId.containsKey(mail)){
+                    emailToId.put(mail, id);
+                    id++;
+                }
+                emailToName.put(mail,name);
+            }
+        }
+
+        init(id);
+
+        // Step2:- Merging mails of same accounts
+        for(List<String> acc: accounts){
+            if(acc.size() <= 2) continue;   // When it contains only 1 or no mails
+            // merging first email account with all other account;
+            int firstAccount = emailToId.get(acc.get(1));
+            for(int i=2; i<acc.size(); i++){
+                int emailId = emailToId.get(acc.get(i));
+                union(firstAccount, emailId);
+            }
+        }
+
+        // Step3:- Assigning groups to the mails of same parent 
+        // key-> id of parent, value-> all mails associated with that parent
+        HashMap<Integer, List<String>> groupToId = new HashMap<>();
+        for(String mail: emailToId.keySet()){
+            int emailID = emailToId.get(mail);
+            int root = find(emailID);
+            if(!groupToId.containsKey(root)){
+                groupToId.put(root, new ArrayList<>());
+            }
+            groupToId.get(root).add(mail);
+        }
+
+        // Final Step
+        List<List<String>> result = new ArrayList<>();
+        for(Integer node: groupToId.keySet()){
+            List<String> merge = groupToId.get(node);
+            Collections.sort(merge);
+            List<String> ans = new ArrayList<>();
+            ans.add(emailToName.get(merge.get(0)));
+            ans.addAll(merge);
+            result.add(ans);
+        }
+        return result;
+    }
+}
