@@ -1,5 +1,5 @@
 ## RECURSION ##
-class Solution {
+class Solution { 
     public int solve(int[] nums, int cur, int last){
         if(cur == nums.length) return 0;
 
