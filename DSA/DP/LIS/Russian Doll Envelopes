@@ -1,0 +1,46 @@
+class Solution {
+    public int findIdx(ArrayList<Integer> temp, int val){
+        int l = 0, r = temp.size()-1;
+        while(l <= r){
+            int mid = l+(r-l)/2;
+            if(temp.get(mid) >= val){
+                r = mid-1;
+            }else{
+                l = mid+1;
+            }
+        }
+        return l;
+    }
+    public int maxEnvelopes(int[][] envelopes) {
+        int n = envelopes.length; 
+        int[] dp = new int[n];
+        Arrays.fill(dp,1);
+        // width → increasing
+        // height → decreasing (if widths equal)
+        // This ensures LIS never picks envelopes with same width
+        Arrays.sort(envelopes, (a,b)-> 
+            a[0] == b[0] ? Integer.compare(b[1], a[1]) 
+                        : Integer.compare(a[0], b[0]));
+
+        int max = 1;
+        int[] lis = new int[n];
+        for(int i=0; i<n; i++){
+            // Why storing height ?
+            // Because after sorting by width, width condition is automatically satisfied.
+            // So we only need to check height condition.
+            lis[i] = envelopes[i][1];
+        }        
+
+        ArrayList<Integer> temp = new ArrayList<>();
+        temp.add(lis[0]);
+        for(int i=1; i<n; i++){
+            if(lis[i] > temp.get(temp.size()-1)){
+                temp.add(lis[i]);
+            }else{
+                int idx = findIdx(temp, lis[i]);
+                temp.set(idx, lis[i]);
+            }
+        }
+        return temp.size();
+    }
+}
