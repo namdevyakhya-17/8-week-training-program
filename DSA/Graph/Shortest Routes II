@@ -1,0 +1,79 @@
+import java.io.*;
+import java.util.*;
+
+public class ShortestRouteII {
+
+    static final long INF = Long.MAX_VALUE >> 2;
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+
+        long[][] dist = new long[n][n];
+
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(dist[i], INF);
+            dist[i][i] = 0;
+        }
+
+        // edges
+        for (int i = 0; i < m; i++) {
+
+            st = new StringTokenizer(br.readLine());
+
+            int u = Integer.parseInt(st.nextToken()) - 1;
+            int v = Integer.parseInt(st.nextToken()) - 1;
+            long c = Long.parseLong(st.nextToken());
+
+            if (c < dist[u][v]) {
+                dist[u][v] = c;
+                dist[v][u] = c;
+            }
+        }
+
+        // Optimized Floyd Warshall
+        for (int k = 0; k < n; k++) {
+
+            long[] distK = dist[k];
+
+            for (int i = 0; i < n; i++) {
+
+                long dik = dist[i][k];
+                if (dik == INF) continue;
+
+                long[] distI = dist[i];
+
+                for (int j = 0; j < n; j++) {
+
+                    long newDist = dik + distK[j];
+                    if (newDist < distI[j]) {
+                        distI[j] = newDist;
+                    }
+
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        while (q-- > 0) {
+
+            st = new StringTokenizer(br.readLine());
+
+            int u = Integer.parseInt(st.nextToken()) - 1;
+            int v = Integer.parseInt(st.nextToken()) - 1;
+
+            long ans = dist[u][v];
+
+            if (ans == INF) sb.append(-1).append('\n');
+            else sb.append(ans).append('\n');
+        }
+
+        System.out.print(sb);
+    }
+}
