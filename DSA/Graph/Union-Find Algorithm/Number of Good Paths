@@ -1,0 +1,84 @@
+import java.util.*;
+
+class Solution {
+
+    int[] parent;
+    int[] size;
+
+    public int find(int x){
+        if(parent[x] == x)
+            return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    public void union(int x, int y){
+        int px = find(x);
+        int py = find(y);
+
+        if(px == py) return;
+
+        if(size[px] < size[py]){
+            parent[px] = py;
+            size[py] += size[px];
+        }
+        else{
+            parent[py] = px;
+            size[px] += size[py];
+        }
+    }
+
+    public int numberOfGoodPaths(int[] vals, int[][] edges) {
+        int n = vals.length;
+        parent = new int[n];
+        size = new int[n];
+
+        for(int i = 0; i < n; i++){
+            parent[i] = i;
+            size[i] = 1;
+        }
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for(int i = 0; i < n; i++)
+            graph.add(new ArrayList<>());
+
+        for(int[] e : edges){
+            graph.get(e[0]).add(e[1]);
+            graph.get(e[1]).add(e[0]);
+        }
+
+        // Storing nodes of same value together
+        TreeMap<Integer, List<Integer>> map = new TreeMap<>();
+        for(int i = 0; i < n; i++){
+            map.computeIfAbsent(vals[i], k -> new ArrayList<>()).add(i);
+        }
+
+        int goodPaths = 0;
+
+        // process values in sorted order
+        for(int value : map.keySet()){
+            List<Integer> nodes = map.get(value);
+            // union neighbors with smaller or equal value
+            for(int node : nodes){
+                for(int nei : graph.get(node)){
+                    if(vals[nei] <= value){
+                        union(node, nei);
+                    }
+                }
+            }
+
+            // count nodes with same parent
+            HashMap<Integer, Integer> count = new HashMap<>();
+            for(int node : nodes){
+                int parent = find(node);
+                count.put(parent, count.getOrDefault(parent, 0) + 1);
+            }
+
+            // calculate good paths
+            for(int c : count.values()){
+                goodPaths += c * (c + 1) / 2;
+            }
+        }
+
+        return goodPaths;
+    }
+}
