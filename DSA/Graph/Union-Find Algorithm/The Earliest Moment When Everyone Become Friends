@@ -1,0 +1,51 @@
+import java.util.*;
+public class BecomeFriends {
+    static int[] parent;
+    static int[] rank;
+    public static void init(int n){
+        parent = new int[n];
+        rank = new int[n];
+        for(int i=0; i<n; i++){
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+    public static int find(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = find(parent[x]);
+    } 
+
+    public static boolean union(int x, int y){
+        int par_x = find(x);
+        int par_y = find(y);
+        if(par_x == par_y) return false;
+        if(rank[par_x] > rank[par_y]){
+            parent[par_y] = par_x;
+        }else if(rank[par_x] < rank[par_y]){
+            parent[par_x] = par_y;
+        }else{
+            parent[par_x] = par_y;
+            rank[par_y]++;
+        }
+        return true;
+    }
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int q = sc.nextInt();
+        // int[][] arr = new int[n][3];
+        int time = -1;
+        init(n);
+        for(int i=0; i<q; i++){
+            int t = sc.nextInt();
+            int a = sc.nextInt();
+            int b = sc.nextInt();
+            if(union(a, b)){
+                time = t;
+            }
+        }
+        sc.close();
+
+        System.out.println(time);
+    }
+}
