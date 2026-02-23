@@ -1,0 +1,15 @@
+class Solution {
+    int maxSum = Integer.MIN_VALUE;
+    int findSum(Node root){
+        if(root == null) return 0;
+        
+        int ld = Math.max(0,findSum(root.left));
+        int rd = Math.max(0,findSum(root.right));
+        maxSum = Math.max(maxSum,(ld+rd+root.data));
+        return Math.max(ld,rd)+root.data;
+    }
+    int findMaxSum(Node root) {
+        findSum(root);
+        return maxSum;
+    }
+}
