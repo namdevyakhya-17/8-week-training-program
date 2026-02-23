@@ -1,0 +1,40 @@
+class Solution {
+    class Pair{
+        Node root;
+        int dest;
+        Pair(Node root, int dest){
+            this.root = root;
+            this.dest = dest;
+        }
+    }
+    public ArrayList<Integer> topView(Node root) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        HashMap<Integer,Integer> map = new HashMap<>();
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(root,0));
+        int min = 0, max=0;
+        
+        while(!q.isEmpty()){
+            Pair cur = q.poll();
+            Node node = cur.root;
+            int point = cur.dest;
+            
+            if(!map.containsKey(point)){
+                map.put(point,node.data);
+            }
+            if(node.left != null){
+                q.add(new Pair(node.left, point-1));
+                min = Math.min(min,point-1);
+            }
+            if(node.right != null){
+                q.add(new Pair(node.right, point+1));
+                max = Math.max(max, point+1);
+            }
+        }
+        
+        for(int i=min; i<=max; i++){
+            ans.add(map.get(i));
+        }
+        return ans;
+    }
+}
