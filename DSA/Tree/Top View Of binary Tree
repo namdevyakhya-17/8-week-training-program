@@ -38,3 +38,7 @@ class Solution {
         return ans;
     }
 }
+
+
+// DFS -> We cannot use DFS instead of BFS becuase it'll traverse one side of the tree first in which left and right unique points value already 
+// added in the tree which would not be updated while moving to another side of tree and will give wrong nodes as top view of tree
