@@ -1,0 +1,35 @@
+class Solution {
+    void collectLeft(Node root, ArrayList<Integer> ans){
+        if(root == null) return;
+        if(root.left == null && root.right == null) return;
+        ans.add(root.data);
+        if(root.left != null) collectLeft(root.left,ans);
+        else collectLeft(root.right, ans);
+    }
+    void collectLeaf(Node root, ArrayList<Integer> ans){
+        if(root == null) return;
+        if(root.left == null && root.right == null){
+            ans.add(root.data);
+            return;
+        }
+        collectLeaf(root.left, ans);
+        collectLeaf(root.right, ans);
+    }
+    void collectRight(Node root, ArrayList<Integer> ans){
+        if(root == null) return;
+        if(root.left == null && root.right == null) return;
+        
+        if(root.right != null) collectRight(root.right, ans);
+        else collectRight(root.left, ans);
+        ans.add(root.data);
+    }
+    ArrayList<Integer> boundaryTraversal(Node root) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        ans.add(root.data);
+        collectLeft(root.left,ans);
+        collectLeaf(root.left,ans);
+        collectLeaf(root.right,ans);
+        collectRight(root.right, ans);
+        return ans;
+    }
+}
