@@ -1,0 +1,68 @@
+class Solution {
+    static class Pair{
+        Node node;
+        int dist;
+        Pair(Node node, int dist){
+            this.node = node;
+            this.dist = dist;
+        }
+    }
+    
+    static HashMap<Node,Node> parent = new HashMap<>();
+    
+    public static void findParent(Node root){
+        if(root == null) return;
+        if(root.left != null){
+            parent.put(root.left, root);
+            findParent(root.left);
+        }
+        if(root.right != null){
+            parent.put(root.right, root);
+            findParent(root.right);
+        }
+    }
+    
+    public static Node findTarget(Node root, int target){
+        if(root == null) return null;
+        if(root.data == target) return root;
+        Node left = findTarget(root.left, target);
+        if(left != null) return left;
+        
+        return findTarget(root.right, target);
+    }
+    public static ArrayList<Integer> KDistanceNodes(Node root, int target, int k) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        findParent(root);
+        Queue<Pair> q = new LinkedList<>();
+        Node tar = findTarget(root,target);
+        q.add(new Pair(tar, 0));
+        HashSet<Node> visited = new HashSet<>();
+        visited.add(tar);
+        
+        while(!q.isEmpty()){
+            Pair cur = q.poll();
+            Node node = cur.node;
+            int dist = cur.dist;
+            if(dist == k){
+                ans.add(node.data);
+                continue;
+            }
+            
+            if(node.left != null && !visited.contains(node.left)){
+                q.add(new Pair(node.left,dist+1));
+                visited.add(node.left);
+            }
+            if(node.right != null && !visited.contains(node.right)){
+                q.add(new Pair(node.right, dist+1));
+                visited.add(node.right);
+            }
+            if(parent.get(node) != null && !visited.contains(parent.get(node))){
+                q.add(new Pair(parent.get(node), dist+1));
+                visited.add(parent.get(node));
+            }
+        }
+        
+        Collections.sort(ans);
+        return ans;
+    }
+};
