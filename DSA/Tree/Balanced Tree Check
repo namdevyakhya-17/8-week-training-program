@@ -1,0 +1,17 @@
+class Solution {
+    public int findH(Node root){
+        if(root == null) return 0;
+        
+        int lc = findH(root.left);
+        int rc = findH(root.right);
+        if(Math.abs(lc-rc) > 1) return -10;
+        // Why returning -10 & why not -1?
+        // A balanced subtree can have difference -1 also which will give problem further
+        return Math.max(lc,rc)+1;
+    }
+    public boolean isBalanced(Node root) {
+        if(root == null) return true;
+        int height = findH(root);
+        return height > 0;
+    }
+}
