@@ -6,3 +6,28 @@ class Solution {
         return Math.max(lc,rc);
     }
 }
+
+
+// Using Queue -> iteration technique
+class Solution {
+    public int maxDepth(TreeNode root) {
+        if(root == null) return 0;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int level = 1;
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i=0; i<size; i++){
+                TreeNode cur = q.poll();
+                if(cur.left != null){
+                    q.add(cur.left);
+                }
+                if(cur.right != null){
+                    q.add(cur.right);
+                }               
+            }
+            if(!q.isEmpty()) level++;
+        }
+        return level;
+    }
+}
