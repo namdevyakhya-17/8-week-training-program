@@ -1,0 +1,49 @@
+class Solution {
+    class Tuple{
+        int col;
+        int row;
+        TreeNode node;
+        public Tuple(int col, int row, TreeNode node){
+            this.col = col;
+            this.row = row;
+            this.node = node;
+        }
+    }
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        TreeMap<Integer, TreeMap<Integer, PriorityQueue<Integer>>> map = new TreeMap<>();
+        Queue<Tuple> q = new LinkedList<>();
+        q.add(new Tuple(0,0,root));
+
+        while(!q.isEmpty()){
+            Tuple cur = q.poll();
+            int cur_r = cur.row;
+            int cur_c = cur.col;
+            TreeNode cur_node = cur.node;
+
+            map.putIfAbsent(cur_c, new TreeMap<>());
+            map.get(cur_c).putIfAbsent(cur_r,new PriorityQueue<>());
+            map.get(cur_c).get(cur_r).offer(cur_node.val);
+            if(cur_node.left != null){
+                q.add(new Tuple(cur_c-1, cur_r+1, cur_node.left));
+            }
+            if(cur_node.right != null){
+                q.add(new Tuple(cur_c+1, cur_r+1, cur_node.right));
+            }
+
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        for(TreeMap<Integer, PriorityQueue<Integer>> rows: map.values()){
+            List<Integer> temp = new ArrayList<>();
+            for(PriorityQueue<Integer> pq: rows.values()){
+                while(!pq.isEmpty()){
+                    int value = pq.poll();
+                    temp.add(value);
+                }
+            }
+            ans.add(temp);
+        }
+
+        return ans;
+    }
+}
