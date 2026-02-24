@@ -47,3 +47,58 @@ class Solution {
         return ans;
     }
 }
+
+
+// More Optimised Way
+class Solution {
+    class Tuple{
+        int col;
+        int row;
+        TreeNode node;
+        public Tuple(int col, int row, TreeNode node){
+            this.col = col;
+            this.row = row;
+            this.node = node;
+        }
+    }
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        List<int[]> list = new ArrayList<>();
+        Queue<Tuple> q = new LinkedList<>();
+        q.add(new Tuple(0,0,root));
+
+        while(!q.isEmpty()){
+            Tuple t = q.poll();
+            int r = t.row;
+            int c = t.col;
+            TreeNode node = t.node;
+            list.add(new int[]{c,r,node.val});
+
+            if(node.left != null){
+                q.add(new Tuple(c-1,r+1,node.left));
+            }
+            if(node.right != null){
+                q.add(new Tuple(c+1,r+1,node.right));
+            }
+        }
+
+        Collections.sort(list, (a,b) -> {
+            if(a[0] != b[0]) return a[0]-b[0];
+            if(a[1] != b[1]) return a[1]-b[1];
+            return a[2]-b[2];
+        });
+
+        List<List<Integer>> ans = new ArrayList<>();
+        int prevCol = Integer.MIN_VALUE;
+        for(int[] res: list){
+            int col=res[0];
+            int node_val = res[2];
+
+            if(col != prevCol){
+                prevCol = col;
+                ans.add(new ArrayList<>());
+            }
+            ans.get(ans.size()-1).add(node_val);
+        }
+        return ans;
+    }
+}
