@@ -1,0 +1,69 @@
+class Solution {
+    class Pair{
+        TreeNode root;
+        int time;
+        Pair(TreeNode root, int time){
+            this.root = root;
+            this.time = time;
+        }
+    }
+
+    public TreeNode findParent(HashMap<TreeNode, TreeNode> parent, TreeNode root, int start){
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        TreeNode startN = null;
+
+        while(!q.isEmpty()){
+            TreeNode node = q.poll();
+            if(node.val == start){
+                startN = node;
+            }
+            if(node.left != null){
+                q.add(node.left);
+                parent.put(node.left, node);
+            }
+            if(node.right != null){
+                q.add(node.right);
+                parent.put(node.right, node);
+            }
+        }
+
+        return startN;
+    }
+    public int amountOfTime(TreeNode root, int start){ 
+        HashMap<TreeNode, TreeNode> parent = new HashMap<>();
+        TreeNode startN = findParent(parent, root, start);
+        
+        HashSet<TreeNode> visited = new HashSet<>();
+
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(startN,0));
+        visited.add(startN);
+        int time  = 0;
+
+        while(!q.isEmpty()){
+            int size=  q.size();
+            for(int i=0; i<size; i++){
+                Pair p = q.poll();
+                TreeNode node = p.root;
+                int nodeT = p.time;
+                time = Math.max(time, nodeT);
+
+                if(node.left != null && !visited.contains(node.left)){
+                    q.add(new Pair(node.left, nodeT+1));
+                    visited.add(node.left);
+                }
+                if(node.right != null && !visited.contains(node.right)){
+                    q.add(new Pair(node.right, nodeT+1));
+                    visited.add(node.right);
+                }
+                if(parent.containsKey(node) && !visited.contains(parent.get(node))){
+                    q.add(new Pair(parent.get(node), nodeT+1));
+                    visited.add(parent.get(node));
+                }
+            }
+        }
+
+        return time;
+    }
+}
