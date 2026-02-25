@@ -1,0 +1,37 @@
+class Solution {
+    public int rob(TreeNode root) {
+        if(root == null) return 0;
+
+        int take1=0;
+        int take2=0;
+        if(root.left != null){
+            take1 = rob(root.left.left) + rob(root.left.right);
+        }
+        if(root.right != null){
+            take2 = rob(root.right.left) + rob(root.right.right);
+        }
+        int take  = root.val+ take1+take2;
+        int notake = rob(root.left)+rob(root.right);
+        return Math.max(take, notake);
+    }
+}
+
+// Optimised
+class Solution {
+    public int[] solve(TreeNode root){
+        if(root == null) return new int[]{0,0};
+
+        int[] choice = new int[2];
+        int[] choice_left = solve(root.left);
+        int[] choice_right = solve(root.right);
+        choice[0] = choice_left[1] + choice_right[1] + root.val;
+        choice[1] = Math.max(choice_left[0], choice_left[1]) + 
+                    Math.max(choice_right[0], choice_right[1]);
+
+        return choice;
+    }
+    public int rob(TreeNode root) {
+        int[] ans = solve(root);
+        return Math.max(ans[0], ans[1]);
+    }
+}
