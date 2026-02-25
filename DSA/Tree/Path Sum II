@@ -1,0 +1,22 @@
+class Solution {
+    public void getPath(TreeNode root, int targetSum, List<List<Integer>> ans, List<Integer> temp){
+        if(root == null) return;
+
+        temp.add(root.val);
+        if(root.left == null && root.right  == null && root.val == targetSum){
+            ans.add(new ArrayList<>(temp));
+            temp.remove(temp.size()-1);
+            return;
+        } 
+
+        getPath(root.left, targetSum-root.val, ans, temp);
+        getPath(root.right, targetSum-root.val, ans, temp);
+        temp.remove(temp.size()-1);
+    }
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root == null) return ans;
+        getPath(root,targetSum, ans, new ArrayList<>());
+        return ans;
+    }
+}
