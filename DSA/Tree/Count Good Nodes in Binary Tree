@@ -1,0 +1,18 @@
+class Solution {
+    public int helper(TreeNode root, int max){
+        if(root == null) return 0;
+
+        int count =0;
+        if(root.val >= max){
+            count = 1;
+        }=9
+        max = Math.max(max, root.val);
+        count += helper(root.right, max);
+        count += helper(root.left, max);
+
+        return count;
+    }
+    public int goodNodes(TreeNode root) {
+        return helper(root, root.val);
+    }
+}
