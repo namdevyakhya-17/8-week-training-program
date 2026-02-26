@@ -1,0 +1,46 @@
+import java.io.*;
+import java.util.*;
+
+public class IceSkating {
+    static int n;
+    static int[][] points;
+    static boolean[] visited;
+
+    static void dfs(int i) {
+        visited[i] = true;
+
+        for (int j = 0; j < n; j++) {
+            if (!visited[j]) {
+                if (points[i][0] == points[j][0] || 
+                    points[i][1] == points[j][1]) {
+                    dfs(j);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+
+        points = new int[n][2];
+        visited = new boolean[n];
+
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            points[i][0] = Integer.parseInt(st.nextToken());
+            points[i][1] = Integer.parseInt(st.nextToken());
+        }
+
+        int components = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                dfs(i);
+                components++;
+            }
+        }
+
+        System.out.println(components - 1);
+    }
+}
