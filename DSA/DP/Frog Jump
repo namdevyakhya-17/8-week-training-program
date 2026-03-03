@@ -1,4 +1,4 @@
-class Solution {
+class Solution { 
     HashMap<Integer, Integer> map = new HashMap<>();
     HashSet<String> visited= new HashSet<>();
 
