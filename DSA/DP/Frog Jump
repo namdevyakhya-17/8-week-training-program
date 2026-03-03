@@ -1,5 +1,5 @@
 class Solution { 
-    HashMap<Integer, Integer> map = new HashMap<>();
+    HashMap<Integer, Integer> map = new HashMap<>(); 
     HashSet<String> visited= new HashSet<>();
 
     public boolean solve(int[] stones, int cur_idx, int preJump){
