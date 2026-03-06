@@ -66,7 +66,7 @@ class Solution {
     }
 }
 
-## Space Optimisation ##
+## Space Optimisation -1 ##
 class Solution {
     public int maxProfit(int[] prices) {
         int n = prices.length;
@@ -88,5 +88,25 @@ class Solution {
         }
 
         return next[1];
+    }
+}
+
+## Space Optimisation -2 ##
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        int nextBuy, nextNotBuy, curBuy, curNotBuy;
+        nextBuy = nextNotBuy = 0;
+
+        for(int i=n-1; i>=0; i--){
+            curBuy = Math.max(-prices[i] + nextNotBuy,   // taken -> time to sell
+                                    0 + nextBuy);   // not taken -> time to buy); 
+            curNotBuy = Math.max(prices[i] + nextBuy,   // taken -> time to buy again
+                                    0 + nextNotBuy);       // not taken -> time to sell
+            nextBuy = curBuy;
+            nextNotBuy = curNotBuy;
+        }
+
+        return nextBuy;
     }
 }
