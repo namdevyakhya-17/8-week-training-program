@@ -1,0 +1,130 @@
+## Recursion ##
+class Solution {
+    public int solve(int[] prices, int i, boolean buy, int cap){
+        if(cap == 0) return 0;
+        if(i == prices.length) return 0;
+
+        if(buy){   // buy
+            return Math.max(-prices[i] + solve(prices, i+1, !buy, cap),   // taken -> time to sell
+                               0 + solve(prices, i+1, buy, cap));   // not taken -> time to buy); 
+        }else{   // sell
+            return Math.max(prices[i] + solve(prices, i+1, !buy, cap-1),   // taken -> time to buy again
+                               0 + solve(prices, i+1, buy, cap));       // not taken -> time to sell
+        }
+    }
+    public int maxProfit(int[] prices) {
+        return solve(prices, 0, true, 2);
+    }
+}
+
+## Memoization ##
+class Solution {
+    Integer[][][] dp;
+    public int solve(int[] prices, int i, int buy, int cap){
+        if(cap == 0) return 0;
+        if(i == prices.length) return 0;
+        if(dp[i][buy][cap] != null) return dp[i][buy][cap];
+
+        if(buy == 1){   // buy
+            return dp[i][buy][cap] = Math.max(-prices[i] + solve(prices, i+1, 0, cap),   // taken -> time to sell
+                               0 + solve(prices, i+1, 1, cap));   // not taken -> time to buy); 
+        }else{   // sell
+            return dp[i][buy][cap] = Math.max(prices[i] + solve(prices, i+1, 1, cap-1),   // taken -> time to buy again
+                               0 + solve(prices, i+1, 0, cap));       // not taken -> time to sell
+        }
+    }
+    public int maxProfit(int[] prices) {
+        dp = new Integer[prices.length][2][3];
+        return solve(prices, 0, 1, 2);
+    }
+}
+
+## Tabulation ##
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        int[][][] dp = new int[n+1][2][3];
+        // base cases
+        // when cap=0
+        for(int i=0; i<prices.length; i++){
+            for(int j=0; j<2; j++){
+                dp[i][j][0] = 0;
+            }
+        }
+
+        // when index = n,  return 0
+        for(int i=0; i<2; i++){
+            for(int j=0; j<3; j++){
+                dp[n][i][j] = 0;
+            }
+        }
+
+        // changing parameters
+        for(int i=n-1;i>=0; i--){
+            for(int buy=0; buy<2; buy++){
+                for(int cap=1; cap<=2; cap++){
+                    if(buy == 1){   // buy
+                        dp[i][buy][cap] = Math.max(-prices[i] + dp[i+1][0][cap],
+                                        0 + dp[i+1][1][cap]); 
+                    }else{   // sell
+                        dp[i][buy][cap] = Math.max(prices[i] + dp[i+1][1][cap-1], 
+                                        0 + dp[i+1][0][cap]);
+                    }
+                }
+            }
+        }
+
+        return dp[0][1][2];
+    }
+}
+
+## Space Optimisation ##
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        int[][] next = new int[2][3];
+        // base cases
+        // when cap=0
+        for(int j=0; j<2; j++){
+            next[j][0] = 0;
+        }
+
+        // changing parameters
+        for(int i=n-1;i>=0; i--){
+            int[][] cur = new int[2][3];
+            for(int buy=0; buy<2; buy++){
+                for(int cap=1; cap<=2; cap++){
+                    if(buy == 1){   // buy
+                        cur[buy][cap] = Math.max(-prices[i] + next[0][cap],
+                                        0 + next[1][cap]); 
+                    }else{   // sell
+                        cur[buy][cap] = Math.max(prices[i] + next[1][cap-1], 
+                                        0 + next[0][cap]);
+                    }
+                }
+            }
+            next = cur;
+        }
+
+        return next[1][2];
+    }
+}
+
+## Method -2 ##
+class Solution {
+    Integer[][] dp;
+    public int solve(int[] prices, int i, int transaction){
+        if(i == prices.length || transaction == 4) return 0;
+        if(dp[i][transaction] != null) return dp[i][transaction];
+ 
+        if(transaction%2 == 0){   // buy
+            return dp[i][transaction] = Math.max(-prices[i] + solve(prices, i+1, transaction+1), 0+solve(prices,i+1, transaction));
+        }else{   // sell
+            return dp[i][transaction]= Math.max(prices[i] + solve(prices, i+1, transaction+1), 0+solve(prices,i+1, transaction));
+        }
+    }
+    public int maxProfit(int[] prices) {
+        dp = new Integer[prices.length][4];
+        return solve(prices, 0, 0);
+    }
+}
