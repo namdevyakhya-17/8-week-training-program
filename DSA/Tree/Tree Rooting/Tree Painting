@@ -2,9 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class TreePainting { 
+public class TreePainting {
     static List<Integer>[] tree;  // it is faster than List<List<>>
-    static long[] distance;
     static long[] subtree;
     static long[] ans;
     static long N;
@@ -15,8 +14,8 @@ public class TreePainting {
             if(child == parent) continue;
             dfs(child,node);
             subtree[node] += subtree[child];
-            distance[node] = distance[node] + subtree[child] + distance[child];
         }
+        ans[1] += subtree[node];
     }
 
     public static void reRoot(int node, int parent){
@@ -29,7 +28,6 @@ public class TreePainting {
     public static long[] sumOfDistancesInTree(int n, int[][] edges) {
         N = n-1;
         tree = new ArrayList[n];
-        distance = new long[n];
         subtree = new long[n];
         ans = new long[n];
         for(int i=0; i<n; i++){
@@ -42,7 +40,6 @@ public class TreePainting {
             tree[v].add(u);
         }
         dfs(1,-1);
-        ans[1] = distance[1];
         // re-rooting
         reRoot(1,-1);
 
@@ -62,6 +59,6 @@ public class TreePainting {
         for (int i = 1; i < ans.length; i++) {
             max = Math.max(max,ans[i]);
         }
-        System.out.println(max+N);
+        System.out.println(max);
     }
 }
