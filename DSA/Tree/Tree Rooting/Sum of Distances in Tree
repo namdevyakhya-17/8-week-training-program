@@ -1,0 +1,44 @@
+// Brute Force
+class Solution {
+    public int bfs(int src, List<List<Integer>> tree){
+        boolean[] visited = new boolean[tree.size()+1];
+        Queue<int[]> q = new LinkedList<>();
+        int dist = 0;
+        q.add(new int[]{src,0});
+        visited[src] = true;
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            int node = cur[0];
+            int dis = cur[1];
+            dist += dis;
+            for(int v: tree.get(node)){
+                if(!visited[v]){
+                    q.add(new int[]{v,dis+1});
+                }
+            }
+        }
+        return dist;
+    }
+    public int[] sumOfDistancesInTree(int n, int[][] edges) {
+        List<List<Integer>> tree = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            tree.add(new ArrayList<>());
+        }
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            tree.get(u).add(v);
+            tree.get(v).add(u);
+        }
+
+        int[] dist = new int[n];
+        for(int i=0; i<n; i++){
+            int res = bfs(i,tree);
+            dist[i] = res;
+        }
+        return dist;
+    }
+}
+
+// Optimisation 
+
