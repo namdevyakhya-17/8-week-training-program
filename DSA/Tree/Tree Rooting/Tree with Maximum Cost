@@ -1,0 +1,76 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class TreeMaxCost {
+    static List<Integer>[] tree;  // it is faster than List<List<>>
+    static long[] distance;
+    static long[] subtree;
+    static long[] ans;
+    static long[] nodeCost;
+    static long N;
+
+    public static void dfs(int node, int parent){
+        subtree[node] = nodeCost[node];
+        for(int child: tree[node]){
+            if(child == parent) continue;
+            dfs(child,node);
+            subtree[node] += subtree[child];
+            distance[node] = distance[node] + subtree[child] + distance[child];
+        }
+    }
+
+    public static void reRoot(int node, int parent){
+        for(int child: tree[node]){
+            if(child == parent) continue;
+            ans[child] = ans[node] + N - 2*subtree[child];
+            reRoot(child, node);
+        }
+    }
+    public static long[] sumOfDistancesInTree(int n, int[][] edges, long[] cost) {
+        tree = new ArrayList[n];
+        distance = new long[n];
+        subtree = new long[n];
+        ans = new long[n];
+        nodeCost = new long[n];
+        for(int i=0; i<n; i++){
+            tree[i] = new ArrayList<>();
+        }
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            tree[u].add(v);
+            tree[v].add(u);
+        }
+        for(int i=1; i<n; i++){
+            nodeCost[i] = cost[i];
+            N += cost[i];  // totalcost
+        }
+        dfs(1,-1);
+        ans[1] = distance[1];
+        // re-rooting
+        reRoot(1,-1);
+
+        return ans;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        long cost[] = new long[n+1];
+        for(int i=1; i<=n; i++){
+            cost[i] = sc.nextInt();
+        }
+        int[][] edge = new int[n-1][2];
+        for(int i=0; i<n-1; i++){
+            edge[i][0] = sc.nextInt();
+            edge[i][1] = sc.nextInt();
+        }
+        sc.close();
+        sumOfDistancesInTree(n+1, edge, cost);
+        long max = 0;
+        for (int i = 1; i < ans.length; i++) {
+            max = Math.max(max, ans[i]);
+        }
+        System.out.print(max + " ");
+    }
+}
