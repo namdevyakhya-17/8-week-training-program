@@ -41,4 +41,50 @@ class Solution {
 }
 
 // Optimisation 
+class Solution {
+    List<Integer>[] tree;  // it is faster than List<List<>>
+    int[] distance;
+    int[] subtree;
+    int[] ans;
+    int N;
 
+    public void dfs(int node, int parent){
+        subtree[node] = 1;
+        for(int child: tree[node]){
+            if(child == parent) continue;
+            dfs(child,node);
+            subtree[node] += subtree[child];
+            distance[node] = distance[node] + subtree[child] + distance[child];
+        }
+    }
+
+    public void reRoot(int node, int parent){
+        for(int child: tree[node]){
+            if(child == parent) continue;
+            ans[child] = ans[node] + N - 2*subtree[child];
+            reRoot(child, node);
+        }
+    }
+    public int[] sumOfDistancesInTree(int n, int[][] edges) {
+        N = n;
+        tree = new ArrayList[n];
+        distance = new int[n];
+        subtree = new int[n];
+        ans = new int[n];
+        for(int i=0; i<N; i++){
+            tree[i] = new ArrayList<>();
+        }
+        for(int[] edge: edges){
+            int u = edge[0];
+            int v = edge[1];
+            tree[u].add(v);
+            tree[v].add(u);
+        }
+        dfs(0,-1);
+        ans[0] = distance[0];
+        // re-rooting
+        reRoot(0,-1);
+
+        return ans;
+    }
+}
