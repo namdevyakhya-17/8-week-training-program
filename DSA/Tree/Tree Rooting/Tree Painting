@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class TreePainting {
+public class TreePainting { 
     static List<Integer>[] tree;  // it is faster than List<List<>>
     static long[] distance;
     static long[] subtree;
