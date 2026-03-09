@@ -1,0 +1,76 @@
+import java.io.*;
+import java.util.*;
+
+public class TreeDistanceI {
+    static int maxNode;
+    static int maxDist;
+
+    public static void bfs(List<Integer>[] tree, int start, int[] dist) {
+        ArrayDeque<Integer> q = new ArrayDeque<>();  // LinkedList is slower for n=2 lakh
+        boolean[] vis = new boolean[tree.length];
+        q.add(start);
+        vis[start] = true;
+        dist[start] = 0;
+        maxDist = 0;
+        maxNode = start;
+
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            for (int v : tree[node]) {
+                if (!vis[v]) {
+                    vis[v] = true;
+                    dist[v] = dist[node] + 1;
+                    q.add(v);
+                    if (dist[v] > maxDist) {
+                        maxDist = dist[v];
+                        maxNode = v;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+
+        List<Integer>[] tree = new ArrayList[n+1];
+        for (int i = 0; i <= n; i++) {
+            tree[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < n - 1; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            tree[u].add(v);
+            tree[v].add(u);
+        }
+
+        int[] distA = new int[n + 1];
+        int[] distB = new int[n + 1];
+
+        // Step 1: from node 1 to find endpoint A
+        bfs(tree, 1, distA);
+        int A = maxNode;
+
+        // Step 2: finding endpoint B from A
+        bfs(tree, A, distA);
+        int B = maxNode;
+
+        // Step 3: finding maxdis from B
+        maxDist = 0;
+        bfs(tree, B, distB);
+
+        int[] dist = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            dist[i] = Math.max(distA[i], distB[i]);
+        }
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        for (int i = 1; i <= n; i++) {
+            bw.write(dist[i] + " ");
+        }
+
+        bw.flush();
+    }
+}
