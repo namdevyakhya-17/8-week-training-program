@@ -3,12 +3,12 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.*;
-
+ 
 public class CompanyQueryI {
-    static int N;
+    static int n;
     static int log = 20;
-    static int[][] up = new int[N][log];
-
+    static int[][] up;
+ 
     public static int lift(int node, int k){
         for(int j=log-1; j>=0; j--){
             if((k&(1<<j)) != 0){
@@ -22,9 +22,10 @@ public class CompanyQueryI {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
         int q = Integer.parseInt(st.nextToken());
-        for(int i=0; i<N; i++){
+        up = new int[n+1][log];
+        for(int i=0; i<n; i++){
             Arrays.fill(up[i],-1);
         }
         st = new StringTokenizer(br.readLine());
@@ -32,7 +33,7 @@ public class CompanyQueryI {
             int node = Integer.parseInt(st.nextToken());
             up[i][0] = node;
         }
-
+ 
         for(int i=1; i<log; i++){
             for(int node=1; node<=n; node++){
                  if(up[node][i-1]!=-1)
@@ -52,4 +53,3 @@ public class CompanyQueryI {
         bw.flush();
     }   
 }
-
