@@ -1,6 +1,6 @@
 class Solution {
     // node states
-    // 0 -> node is not in monitor of camera (not covered)
+    // 0 -> node is not in monitor of camera (not covered) 
     // 1 -> camera needed (placed)
     // 2 -> covered by child's camera (covered)
     int camera=0;
