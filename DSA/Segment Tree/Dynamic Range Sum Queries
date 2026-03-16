@@ -1,0 +1,81 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
+
+public class DynamicRamgeSum{
+    static long[] seg;
+    public static void build(int idx, int left, int right, long[] arr){
+        if(left == right){
+            seg[idx] = arr[left];
+            return;
+        }
+
+        int mid = left + (right-left)/2;
+        build(2*idx, left, mid, arr);
+        build(2*idx+1, mid+1, right, arr);
+        seg[idx] = seg[2*idx] + seg[2*idx+1];
+    }
+
+    public static void update(int idx, int left, int right, int i, long val){
+        if(left == right){
+            seg[idx] = val;
+            return;
+        }
+
+        int mid = left + (right-left)/2;
+        if(i <= mid){
+            update(2*idx, left, mid, i, val);
+        }else{
+            update(2*idx+1, mid+1, right, i, val);
+        }
+        seg[idx] = seg[2*idx] + seg[2*idx+1];
+    }
+
+    public static long query(int idx, int left, int right, int qstart, int qend){
+        // case 1 -> non-overlapping
+        if(left > qend || right < qstart) return 0;
+
+        // case 2 -> fully overlapping
+        if(left >= qstart && right <= qend){
+            return seg[idx];
+        }
+
+        // case 3 -> partially overlapping
+        int mid = left + (right - left)/2;
+        long leftSum = query(2*idx, left, mid, qstart, qend);
+        long rightSum = query(2*idx+1, mid+1, right, qstart, qend);
+        return leftSum + rightSum;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        seg = new long[4*n];
+        long arr[] = new long[n+1];
+        st = new StringTokenizer(br.readLine());
+        for(int i=1; i<=n; i++){
+            arr[i] = Long.parseLong(st.nextToken());
+        }
+
+        build(1,1,n,arr);
+        for(int i=0; i<q; i++){
+            st = new StringTokenizer(br.readLine());
+            int type = Integer.parseInt(st.nextToken());
+            if(type == 1){
+                int k = Integer.parseInt(st.nextToken());
+                long val = Long.parseLong(st.nextToken());
+                update(1, 1, n, k, val);
+            }else{
+                int a = Integer.parseInt(st.nextToken());
+                int b = Integer.parseInt(st.nextToken());
+                long ans = query(1, 1, n, a, b);
+                bw.write(ans + "\n");
+            }
+        }
+        bw.flush();
+    }
+}
