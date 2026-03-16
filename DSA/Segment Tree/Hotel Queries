@@ -1,0 +1,64 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class HotelQueries{
+    static long[] seg;
+    static int n;
+    public static void build(int idx, int left, int right, long[] arr){
+        if(left == right){
+            seg[idx] = arr[left];
+            return;
+        }
+
+        int mid = left + (right-left)/2;
+        build(2*idx, left, mid, arr);
+        build(2*idx+1, mid+1, right, arr);
+        seg[idx] = Math.max(seg[2*idx], seg[2*idx+1]);
+    }
+
+    public static int query(int idx, int left, int right, long required){
+        if(seg[idx] < required) return 0;
+        if(left == right){
+            seg[idx]-=required;
+            return left;
+        }
+
+        int mid = left + (right-left)/2;
+        int res = 0;
+        if(seg[2*idx] >= required){
+            res = query(2*idx, left, mid, required);
+        }else{
+            res = query(2*idx+1, mid+1, right, required);
+        }
+
+        seg[idx] = Math.max(seg[2*idx], seg[2*idx+1]);
+        return res;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder bw = new StringBuilder();
+        n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        seg = new long[4*n];
+        long rooms[] = new long[n+1];
+        st = new StringTokenizer(br.readLine());
+        for(int i=1; i<=n; i++){
+            rooms[i] = Long.parseLong(st.nextToken());
+        }
+
+        long roomsRequire[] = new long[m+1];
+        st = new StringTokenizer(br.readLine());
+        for(int i=1; i<=m; i++){
+            roomsRequire[i] = Long.parseLong(st.nextToken());
+        }
+
+        build(1,1,n,rooms);
+        for(int i=1; i<=m; i++){
+            long ans = query(1, 1, n, roomsRequire[i]);
+            bw.append(ans + " ");
+        }
+        System.out.println(bw);
+    }
+}
