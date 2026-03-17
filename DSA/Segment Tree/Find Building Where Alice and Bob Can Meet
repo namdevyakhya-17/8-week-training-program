@@ -1,0 +1,54 @@
+class Solution {
+    int[] seg;
+    public void build(int idx, int left, int right, int[] heights){
+        if(left == right){
+            seg[idx] = heights[left];
+            return;
+        }
+
+        int mid = left + (right-left)/2;
+        build(2*idx+1, left, mid, heights);
+        build(2*idx+2, mid+1, right, heights);
+        seg[idx] = Math.max(seg[2*idx+1], seg[2*idx+2]);
+    }
+
+    public int query(int idx, int left, int right, int bob, int aliceH){
+        if(right < bob || seg[idx] <= aliceH) return -1;
+        if(left == right){
+            return left;
+        }
+
+        int mid = left + (right-left)/2;
+        int res= -1;
+        if(seg[2*idx+1] > aliceH){
+            res = query(2*idx+1, left, mid, bob, aliceH);
+        }
+        if(res == -1) res = query(2*idx+2, mid+1, right, bob, aliceH);
+        
+        return res;
+    }
+
+    public int[] leftmostBuildingQueries(int[] heights, int[][] queries) {
+        int n = heights.length;
+        seg = new int[4*n];
+        build(0,0,n-1,heights);
+        int i = 0;
+        int[] ans = new int[queries.length];
+        for(int[] query: queries){
+            int alice = query[0];
+            int bob = query[1];
+            if(alice > bob){
+                int temp = alice;
+                alice = bob;
+                bob = temp;
+            }
+            if(alice == bob || heights[alice]< heights[bob]){
+                ans[i++] = bob;
+            }
+            else{    
+                ans[i++] = query(0,0,n-1,bob+1, heights[alice]);
+            }    
+        }
+        return ans;
+    }
+}
