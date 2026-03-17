@@ -1,0 +1,61 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class ListRemovals {
+    static long[] seg;
+    public static void build(int idx, int left, int right){
+        if(left == right){
+            seg[idx] = 1;
+            return;
+        }
+
+        int mid = left + (right-left)/2;
+        build(2*idx+1, left, mid);
+        build(2*idx+2, mid+1, right);
+        seg[idx] = seg[2*idx+1] + seg[2*idx+2];
+    }
+
+    public static long query(int idx, int left, int right, long pos, long[] arr){
+        if(left == right){
+            seg[idx] = 0;
+            return arr[left];
+        }
+
+        int mid = left + (right - left) / 2;
+        long res = 0;
+        if(pos <= seg[2*idx+1]){
+            res = query(2*idx+1, left, mid, pos, arr);
+        }else{
+            res = query(2*idx+2, mid+1, right, pos-seg[2*idx+1], arr);
+        }
+
+        seg[idx] = seg[2*idx+1] + seg[2*idx+2];
+        return res;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        int n = Integer.parseInt(st.nextToken());
+        long[] arr = new long[n];
+        seg = new long[4*n];
+        st = new StringTokenizer(br.readLine());
+        for(int i=0; i<n; i++){
+            arr[i] = Long.parseLong(st.nextToken());
+        }
+
+        int[] position = new int[n];
+        st = new StringTokenizer(br.readLine());
+        for(int i=0; i<n; i++){
+            position[i] = Integer.parseInt(st.nextToken());
+        }
+
+        build(0,0,n-1);
+        for(int i=0; i<n; i++){
+            long ans = query(0,0,n-1,position[i], arr);
+            sb.append(ans).append(" ");
+        }
+        System.out.println(sb);
+    }
+}
