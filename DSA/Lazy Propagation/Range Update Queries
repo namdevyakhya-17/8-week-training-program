@@ -1,0 +1,102 @@
+import java.io.*;
+import java.util.*;
+ 
+class RangeUpdateQuery{
+    static long[] seg;
+    static long[] lazy;
+    public static void build(int idx, int left, int right, long[] arr){
+        if(left == right){
+            seg[idx] = arr[left];
+            return;
+        }
+ 
+        int mid = (left + (right - left)/2) ;
+        build(2*idx, left, mid, arr);
+        build(2*idx+1, mid+1, right, arr);
+        seg[idx] = seg[2*idx] + seg[2*idx+1];
+    }
+ 
+    public static long query(int idx, int left, int right, int i){
+        if(lazy[idx]!=0){
+            seg[idx] += (right-left+1)*lazy[idx];
+            if(left != right){
+                lazy[2*idx] += lazy[idx];
+                lazy[2*idx+1] += lazy[idx];
+            }
+            lazy[idx] = 0;
+        }
+ 
+        if(left == right){
+            return seg[idx];
+        }
+ 
+        int mid = (left + (right-left)/2) ;
+        if(i <= mid){
+            return query(2*idx, left, mid, i);
+        }else{
+            return query(2*idx+1, mid+1, right, i);
+        }
+    }
+ 
+    public static void update(int idx, int left, int right, int qs, int qe, long val){
+        if(lazy[idx]!=0){
+            seg[idx] += (right-left+1)*lazy[idx];
+            if(left != right){
+                lazy[2*idx] += lazy[idx];
+                lazy[2*idx+1] += lazy[idx];
+            }
+            lazy[idx] = 0;
+        }
+ 
+        // no overlapping
+        if(right < qs || left > qe) return;
+         
+        // fully overlapping
+        if(qs <= left && right <= qe){
+            seg[idx] += (right - left + 1) * val;
+            if(left != right){
+                lazy[2*idx] += val;
+                lazy[2*idx+1] += val;
+            }
+            return;
+        }
+        
+        // partial overlapping
+        int mid = (left + (right - left)/2);
+        update(2*idx, left, mid, qs, qe, val);
+        update(2*idx+1, mid+1, right, qs, qe, val);
+        seg[idx] = seg[2*idx] + seg[2*idx+1];
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        long[] arr = new long[n+1];
+        st = new StringTokenizer(br.readLine());
+        for(int i=1; i<=n; i++){
+            arr[i] = Long.parseLong(st.nextToken());
+        }
+        seg = new long[4*(n+1)];
+        lazy = new long[4*(n+1)];
+        build(1,1,n,arr);
+        
+        for(int i=0; i<q; i++){
+            st = new StringTokenizer(br.readLine());
+            int type = Integer.parseInt(st.nextToken());
+            if(type == 1){
+                int qs = Integer.parseInt(st.nextToken());
+                int qe = Integer.parseInt(st.nextToken());
+                long val = Long.parseLong(st.nextToken());
+                update(1, 1, n, qs, qe, val);
+            }else if(type == 2){
+                int index = Integer.parseInt(st.nextToken());
+                long ans = query(1, 1, n, index);
+                sb.append(ans).append("\n");
+            }
+        }
+ 
+        System.out.println(sb);
+    }
+}
