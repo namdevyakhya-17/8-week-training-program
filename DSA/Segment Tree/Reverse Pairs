@@ -1,0 +1,65 @@
+class Solution {
+    class SegTree{
+        int n;
+        long[] tree;
+        public SegTree(int n){
+            this.n = n;
+            tree = new long[4*n];
+        }
+
+        public long query(int node, int l, int r, int qs, int qe){
+            // no overlapping
+            if(l > qe || r < qs) return 0;
+            // fully overlapping
+            if(qs <= l && r <= qe){
+                return tree[node];
+            }
+
+            // partial overlapping
+            int mid = (l+r)/2;
+            return query(2*node+1, l, mid, qs, qe) + query(2*node+2, mid+1, r, qs, qe);
+        }
+
+        public void update(int node, int l, int r, int idx){
+            if(l == r){
+                tree[node]++;
+                return;
+            }
+            int mid = (l+r)/2;
+            if(idx <= mid){
+                update(2*node+1, l, mid, idx);
+            }else{
+                update(2*node+2, mid+1, r, idx);
+            }
+            tree[node] = tree[2*node+1] + tree[2*node+2];
+        }
+    }
+
+    public int reversePairs(int[] nums) {
+        int n = nums.length;
+        TreeSet<Long> sorted = new TreeSet<>();
+        for(int val: nums){
+            sorted.add((long)val);
+            sorted.add(2L * val);
+        }
+
+        HashMap<Long, Integer> map = new HashMap<>();
+        int idx=0;
+        for(Long val: sorted){
+            if(!map.containsKey(val)){
+                map.put(val,idx++);
+            }
+        }
+
+        SegTree seg = new SegTree((int)idx);
+        int count=0;
+
+        for(int j=0; j<n; j++){
+            int val = map.get(2L*nums[j]);
+            count += seg.query(0,0,idx-1,(int)val+1,idx-1);
+            seg.update(0,0,idx-1,map.get((long)nums[j]));
+        }
+
+        return count;
+    }
+}
