@@ -1,0 +1,68 @@
+class Solution {
+    // value in negaative
+    // range > 10^7
+    // coordinte compression
+    class SegTree{
+        int n;
+        int[] tree;
+        public SegTree(int n){
+            this.n = n;
+            tree = new int[4*n];
+        }
+
+        public int query(int node, int l, int r, int qs, int qe){
+            // no overlapping
+            if(l > qe || r < qs) return 0;
+            // fully overlapping
+            if(qs <= l && r <= qe){
+                return tree[node];
+            }
+
+            // partial overlapping
+            int mid = (l+r)/2;
+            return query(2*node+1, l, mid, qs, qe) + query(2*node+2, mid+1, r, qs, qe);
+        }
+
+        public void update(int node, int l, int r, int idx){
+            if(l == r){
+                tree[node]++;
+                return;
+            }
+            int mid = (l+r)/2;
+            if(idx <= mid){
+                update(2*node+1, l, mid, idx);
+            }else{
+                update(2*node+2, mid+1, r, idx);
+            }
+            tree[node] = tree[2*node+1] + tree[2*node+2];
+        }
+    }
+    public List<Integer> countSmaller(int[] nums) {
+        int n = nums.length;
+        int[] sorted = nums.clone();
+        Arrays.sort(sorted);
+         
+        // Taking hashmap to get index of sorted arrays
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int idx =0;
+        for(int val: sorted){
+            if(!map.containsKey(val)){
+                map.put(val,idx++);
+            }
+        }
+
+        // making Segment Tree
+        SegTree seg = new SegTree(idx);  // idx is total unique numbers available in array
+
+        List<Integer> ans = new ArrayList<>();
+        // right -> left
+        for(int i=n-1; i>=0; i--){
+            int val = map.get(nums[i]);  // get actual value of nums[i] from hashmap after sorting
+            ans.add(seg.query(0,0,idx-1,0,val-1)); // (node,l,r,qs,qe)
+            seg.update(0,0,idx-1,val);
+        }
+
+        Collections.reverse(ans);
+        return ans;
+    }
+}
