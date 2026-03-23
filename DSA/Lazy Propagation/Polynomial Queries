@@ -1,0 +1,116 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Polynomialqueries {
+    static long[] seg;
+    static long[] lazyA;
+    static long[] lazyD;
+
+    public static void build(int node, int left, int right, long[] arr){
+        if(left == right){
+            seg[node] = arr[left];
+            return;
+        }
+
+        int mid = (left+right) >> 1;
+        build(2*node+1, left, mid, arr);
+        build(2*node+2, mid+1, right, arr);
+        seg[node] = seg[2*node+1] + seg[2*node+2];
+    }
+    public static long query(int node, int left, int right, int qs, int qe){
+        // No overlapping
+        if(left > qe || right < qs) return 0;
+
+        // completely overlapping
+        if(qs <= left && right <= qe){
+            return seg[node];
+        }
+
+        // partial overlapping
+        push(node, left, right);
+        int mid = (left + right) >> 1;
+        return query(2*node+1, left, mid, qs, qe) + query(2*node+2, mid+1,  right, qs, qe);
+    }
+
+    public static void update(int node, int left, int right, int qs, int qe){
+        // no overlapping
+        if(left > qe || right < qs) return;
+
+        // completly overlapping
+        if(qs <= left && right <= qe){
+            int a = left - qs + 1;   // find current value of 'a' at left index
+                                    //  skip values from qs to left range and next value would be +1 of how many values we have skipped
+            seg[node] += sum(right-left+1, a, 1);  //(len, a, d)
+            lazyA[node] += a;
+            lazyD[node] += 1;
+            return;
+        }
+
+        push(node, left, right);
+
+        // partially overlapping
+        int mid = (left + right) >> 1;
+        update(2*node+1, left, mid, qs, qe);
+        update(2*node+2, mid+1, right, qs, qe);
+        seg[node] = seg[2*node+1] + seg[2*node+2];
+    }
+
+    public static long sum(long len, long a, long d){
+        return (len*(2*a+(len-1)*d))/2;
+    }
+
+    public static void push(int node, int left, int right){
+        if(lazyA[node] == 0 && lazyD[node] == 0) return;
+
+        int mid = (left+right) >> 1;
+        int leftLen = mid-left+1;
+        int leftN = 2*node+1;
+        int rightN = 2*node+2;
+
+        // Left child
+        seg[leftN] += sum(leftLen, lazyA[node], lazyD[node]);
+        lazyA[leftN] += lazyA[node];
+        lazyD[leftN] += lazyD[node];
+
+        // right child
+        long newA = lazyA[node] + leftLen*lazyD[node];
+        seg[rightN] += sum(right-mid, newA, lazyD[node]);
+        lazyA[rightN] += newA;
+        lazyD[rightN] += lazyD[node];
+        lazyA[node] = 0;
+        lazyD[node] = 0;
+    }
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        long[] num = new long[n];
+        st = new StringTokenizer(br.readLine());
+        for(int i=0; i<n; i++){
+            num[i] = Long.parseLong(st.nextToken());
+        }
+
+        seg = new long[4*n];
+        lazyA = new long[4*n];
+        lazyD = new long[4*n];
+        build(0, 0, n-1, num);
+        while(q-- > 0){
+            st = new StringTokenizer(br.readLine());
+            int type = Integer.parseInt(st.nextToken());
+            int qs = Integer.parseInt(st.nextToken())-1;
+            int qe = Integer.parseInt(st.nextToken())-1;
+            if(type == 2){
+                long ans = query(0, 0, n-1, qs, qe);
+                sb.append(ans).append("\n");
+            }else{
+                update(0, 0, n-1, qs, qe);
+            }
+        }
+
+        System.out.println(sb);
+    }
+}
