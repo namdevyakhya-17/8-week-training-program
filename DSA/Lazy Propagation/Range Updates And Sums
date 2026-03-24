@@ -1,0 +1,142 @@
+import java.util.*;
+import java.io.*;
+
+public class RangeUpdateAndSums {
+    static long[] seg;
+    static long[] lazy;
+    static long[] lazySet;
+    static boolean[] hasSet;
+
+    public static void build(int node, int left, int right, long[] arr) {
+        if (left == right) {
+            seg[node] = arr[left];
+            return;
+        }
+
+        int mid = (left + right) >> 1;
+        build(2 * node + 1, left, mid, arr);
+        build(2 * node + 2, mid + 1, right, arr);
+        seg[node] = seg[2 * node + 1] + seg[2 * node + 2];
+    }
+
+    static void push(int idx, int left, int right) {
+        // Apply SET first
+        if (hasSet[idx]) {
+            seg[idx] = (right - left + 1) * lazySet[idx];
+            if (left != right) {
+                hasSet[2*idx+1] = true;
+                hasSet[2*idx+2] = true;
+                lazySet[2 * idx + 1] = lazySet[idx];
+                lazySet[2 * idx + 2] = lazySet[idx];
+                lazy[2 * idx + 1] = 0;
+                lazy[2 * idx + 2] = 0;
+            }
+            hasSet[idx] = false;
+        }
+
+        // Apply ADD
+        if (lazy[idx] != 0) {
+            seg[idx] += (right - left + 1) * lazy[idx];
+            if (left != right) {
+                lazy[2 * idx + 1] += lazy[idx];
+                lazy[2 * idx + 2] += lazy[idx];
+            }
+            lazy[idx] = 0;
+        }
+    }
+
+    public static long query(int node, int left, int right, int qs, int qe) {
+        push(node, left, right);
+        if (qs > right || left > qe)
+            return 0;
+        if (qs <= left && right <= qe) {
+            return seg[node];
+        }
+
+        int mid = (left + right) >> 1;
+        return query(2 * node + 1, left, mid, qs, qe) + query(2 * node + 2, mid + 1, right, qs, qe);
+    }
+    
+    public static void update(int idx, int left, int right, int qs, int qe, int val) {
+        push(idx, left, right);
+        // no overlapping
+        if (right < qs || left > qe)
+            return;
+
+        // fully overlapping
+        if (qs <= left && right <= qe) {
+            lazy[idx] += val;
+            push(idx, left, right);
+            return;
+        }
+
+        // partial overlapping
+        int mid = (left + right) >> 1;
+        update(2 * idx + 1, left, mid, qs, qe, val);
+        update(2 * idx + 2, mid + 1, right, qs, qe, val);
+        seg[idx] = seg[2 * idx + 1] + seg[2 * idx + 2];
+    }
+
+    public static void updateSet(int idx, int left, int right, int qs, int qe, int x) {
+        push(idx, left, right);
+        // no overlapping
+        if (right < qs || left > qe)
+            return;
+
+        // fully overlapping
+        if (qs <= left && right <= qe) {
+            lazySet[idx] = x;
+            lazy[idx] = 0;
+            hasSet[idx] = true;
+            push(idx, left, right);
+            return;
+        }
+
+        // partial overlapping
+        int mid = (left + (right - left) / 2);
+        updateSet(2 * idx + 1, left, mid, qs, qe, x);
+        updateSet(2 * idx + 2, mid + 1, right, qs, qe, x);
+        seg[idx] = seg[2 * idx + 1] + seg[2 * idx + 2];
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        long[] arr = new long[n];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) {
+            arr[i] = Long.parseLong(st.nextToken());
+        }
+
+        seg = new long[4 * n];
+        lazy = new long[4 * n];
+        lazySet = new long[4 * n];
+        hasSet = new boolean[4*n];
+        build(0, 0, n - 1, arr);
+        while (q-- > 0) {
+            st = new StringTokenizer(br.readLine());
+            int type = Integer.parseInt(st.nextToken());
+            if (type == 1) {
+                int a = Integer.parseInt(st.nextToken()) - 1;
+                int b = Integer.parseInt(st.nextToken()) - 1;
+                int x = Integer.parseInt(st.nextToken());
+                update(0, 0, n - 1, a, b, x);
+            } else if (type == 2) {
+                int a = Integer.parseInt(st.nextToken()) - 1;
+                int b = Integer.parseInt(st.nextToken()) - 1;
+                int x = Integer.parseInt(st.nextToken());
+                updateSet(0, 0, n - 1, a, b, x);
+            } else {
+                int a = Integer.parseInt(st.nextToken()) - 1;
+                int b = Integer.parseInt(st.nextToken()) - 1;
+                long ans = query(0, 0, n - 1, a, b);
+                sb.append(ans).append('\n');
+            }
+        }
+        System.out.println(sb);
+    }
+}
