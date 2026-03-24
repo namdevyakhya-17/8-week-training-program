@@ -1,0 +1,75 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class SubarraySumQueries {
+    static long[] seg;
+    static long[] maxVal, prefixSum, suffixSum;
+    
+    public static void build(int idx, int left, int right, long[] nums){
+        if(left == right){
+            seg[idx] = nums[left];
+            maxVal[idx] = nums[left];
+            prefixSum[idx] = nums[left];
+            suffixSum[idx] = nums[left];
+            return;
+        }
+
+        int mid = (left + right) >> 1;
+        build(2*idx+1, left, mid, nums);
+        build(2*idx+2, mid+1, right, nums);
+        seg[idx] = seg[2*idx+1] + seg[2*idx+2];
+        maxVal[idx] = Math.max(maxVal[2*idx+1], Math.max(maxVal[2*idx+2], suffixSum[2*idx+1] + prefixSum[2*idx+2]));
+        prefixSum[idx] = Math.max(prefixSum[2*idx+1], seg[2*idx+1] + prefixSum[2*idx+2]);
+        suffixSum[idx] = Math.max(suffixSum[2*idx+2], seg[2*idx+2] + suffixSum[2*idx+1]);
+    }
+
+    public static void update(int idx, int left, int right, int i, long val){
+        if(left == right){
+            seg[idx] = val;
+            maxVal[idx] = val;
+            prefixSum[idx] = val;
+            suffixSum[idx] = val;
+            return;
+        }
+
+        int mid = (left + right) >> 1;
+        if(i <= mid){
+            update(2*idx+1, left, mid, i, val);
+        }else{
+            update(2*idx+2, mid+1, right, i, val);
+        }
+        seg[idx] = seg[2*idx+1] + seg[2*idx+2];
+        maxVal[idx] = Math.max(maxVal[2*idx+1], Math.max(maxVal[2*idx+2], suffixSum[2*idx+1] + prefixSum[2*idx+2]));
+        prefixSum[idx] = Math.max(prefixSum[2*idx+1], seg[2*idx+1] + prefixSum[2*idx+2]);
+        suffixSum[idx] = Math.max(suffixSum[2*idx+2], seg[2*idx+2] + suffixSum[2*idx+1]);
+    }
+
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        long[] arr = new long[n];
+        st = new StringTokenizer(br.readLine());
+        for(int i=0; i<n; i++){
+            arr[i] = Long.parseLong(st.nextToken());
+        }
+        
+        seg = new long[4*n];
+        maxVal = new long[4*n];
+        prefixSum = new long[4*n];
+        suffixSum = new long[4*n];
+        build(0, 0, n-1, arr);
+        while (q-- > 0) {
+            st = new StringTokenizer(br.readLine());
+            int i = Integer.parseInt(st.nextToken())-1;
+            long val = Long.parseLong(st.nextToken());
+            update(0, 0, n-1, i, val);
+            sb.append(Math.max(0, maxVal[0])).append('\n');
+        }
+        System.out.println(sb);
+    }   
+}
