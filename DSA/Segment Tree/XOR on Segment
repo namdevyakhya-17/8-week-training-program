@@ -1,0 +1,103 @@
+import java.util.*;
+public class XORonSegment{
+    static int[][] st;  //[node][bit]
+    static int[] lazy;
+    public static void build(int idx, int left, int right, int[] nums){
+        if(left == right){
+           // Flip bits easily during XOR updates
+           // Reconstruct sum later
+            for(int i=0; i<30; i++){
+                if((nums[left] & (1 << i)) != 0){
+                    st[idx][i] = 1;   // At a leaf node (l == r), we are representing one element.
+                }
+            }
+            return;
+        }
+
+        int mid = (left+right)>>1;
+        build(2*idx+1, left, mid, nums);
+        build(2*idx+2, mid+1, right, nums);
+        for(int i=0; i<30; i++){
+            st[idx][i] = st[2*idx+1][i] + st[2*idx+2][i];
+        }
+    }
+    
+    public static long query(int idx, int left, int right, int qs, int qe){
+        if(left > qe || right < qs) return 0;
+        if(qs <= left && right <= qe){
+            long sum =0 ;
+            for(int i=0; i<30; i++){
+                sum += (long) st[idx][i] * (1<<i);
+            }
+            return sum;
+        }
+        push(idx,left, right);
+        int mid = (left+right) >> 1;
+        return query(2*idx+1, left, mid, qs, qe) + query(2*idx+2, mid+1, right, qs, qe);
+    }
+
+    public static void apply(int node, int left, int right, int val){
+        for(int i=0; i<30; i++){
+            if((val & (1 << i)) != 0){
+                st[node][i] = (right - left +1) - st[node][i];
+            }
+        }
+        lazy[node] ^= val;
+    }
+
+    public static void push(int node, int left, int right){
+        if(lazy[node] != 0){
+            if(left != right){   // IMPORTANT
+                int mid = (left + right) >> 1;
+
+                apply(2*node+1, left, mid, lazy[node]);
+                apply(2*node+2, mid+1, right, lazy[node]);
+            }
+            lazy[node] = 0;
+        }
+    }
+    public static void update(int idx, int left, int right, int qs, int qe, int val){
+        if(left > qe || right < qs) return;
+        if(qs <= left && right <= qe){
+            apply(idx, left, right, val);
+            return;
+        }
+
+        push(idx,left, right);
+        int mid = (left+right) >> 1;
+        update(2*idx+1, left, mid, qs, qe, val);
+        update(2*idx+2, mid+1, right, qs, qe, val);
+        for(int i=0; i<30; i++){
+            st[idx][i] = st[2*idx+1][i] + st[2*idx+2][i];
+        }
+    }
+
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] arr = new int[n];
+        for(int i=0; i<n; i++){
+            arr[i] = sc.nextInt();
+        }
+        
+        st = new int[4*n][30];
+        lazy = new int[4*n];
+        build(0,0,n-1,arr);
+        int m = sc.nextInt();
+        while(m-- > 0){
+            int type = sc.nextInt();
+            if(type == 1){
+                int qs = sc.nextInt()-1;
+                int qe = sc.nextInt()-1;
+                long ans = query(0,0,n-1,qs,qe);
+                System.out.println(ans);
+            }else{
+                int qs = sc.nextInt()-1;
+                int qe = sc.nextInt()-1;
+                int val = sc.nextInt();
+                update(0,0,n-1,qs,qe,val);
+            }
+        }
+        sc.close();
+    }
+}
