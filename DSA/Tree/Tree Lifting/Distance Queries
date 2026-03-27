@@ -1,0 +1,92 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Solution {
+    static long N = 200005;
+    static int log = 20;
+    static int[][] up;
+    static int[] depth;
+    static List<Integer>[] tree;
+    public static void dfs(int node, int parent){
+        up[node][0] = parent;
+        for(int i=1; i<log; i++){
+            if(up[node][i-1] != -1){
+                up[node][i] = up[up[node][i-1]][i-1];
+            }else{
+                up[node][i] = -1;
+            }
+        }
+
+        for(int child: tree[node]){
+            if(child == parent) continue;
+            depth[child] = depth[node] + 1;
+            dfs(child, node);
+        }
+    }
+
+    public static int lift(int node, int k){
+        for(int i=log-1; i>=0; i--){
+            if((k&(1<<i)) != 0){
+                node = up[node][i];
+                if(node == -1) return -1;
+            } 
+        }
+        return node;
+    }
+
+    public static int lca(int a, int b){
+        if(depth[a] < depth[b]){
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+        int diff = depth[a] - depth[b];
+        a = lift(a,diff);
+        if(a == b) return a;
+
+        for(int i=log-1; i>=0; i--){
+            if(up[a][i] != up[b][i]){
+                a = up[a][i];
+                b = up[b][i];
+            }
+        }
+        return up[a][0];
+    }
+
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        depth = new int[n+1];
+        up = new int[n+1][log];
+        for(int[] temp: up){
+            Arrays.fill(temp,-1);
+        }
+
+        tree = new ArrayList[n+1];
+        for(int i=0; i<=n; i++){
+            tree[i] = new ArrayList<>();
+        }
+
+        for(int i=1; i<n; i++){
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            tree[a].add(b);
+            tree[b].add(a);
+        }
+        dfs(1,-1);
+        while(q-- > 0){
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int dist1 = depth[a];
+            int dist2 = depth[b];
+            int dist3 = depth[lca(a,b)];
+            long ans = dist1+dist2 - 2*dist3;
+            System.out.println(ans);
+        }     
+    }
+}
