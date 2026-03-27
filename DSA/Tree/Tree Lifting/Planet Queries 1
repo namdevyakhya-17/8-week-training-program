@@ -1,0 +1,45 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Solution {
+    static long N = 200005;
+    static int log = 20;
+    static int[][] up;
+
+    public static int lift(int node, int k){
+        for(int i=log-1; i>=0; i--){
+            if((k&(1<<i)) != 0){
+                node = up[node][i];
+                if(node == -1) return -1;
+            } 
+        }
+        return node;
+    }
+
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        up = new int[n+1][log];
+
+        st = new StringTokenizer(br.readLine());
+        for(int i = 1; i <= n; i++){
+            up[i][0] = Integer.parseInt(st.nextToken());
+        }
+
+        for(int j = 1; j < log; j++){
+            for(int i = 1; i <= n; i++){
+                up[i][j] = up[ up[i][j-1] ][j-1];
+            }
+        }
+        while(q-- > 0){
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int k = Integer.parseInt(st.nextToken());
+            int ans = lift(a, k);
+            System.out.println(ans);
+        }  
+    }
+}
