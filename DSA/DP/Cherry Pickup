@@ -1,0 +1,33 @@
+class Solution {
+    int maxCherry = 0;
+    public void solve2(int[][] grid, int i, int j, int cherry){
+        if(i <0 || j <0 || grid[i][j] == -1) return;
+        if(i == 0 && j == 0){
+            maxCherry = Math.max(maxCherry, cherry);
+            return;
+        }
+        int curCherry = grid[i][j];
+        grid[i][j] = 0;
+        solve2(grid,i,j-1,curCherry + cherry);
+        solve2(grid,i-1,j,curCherry + cherry);
+        grid[i][j] = curCherry;
+    }
+    public void solve(int[][] grid, int i, int j, int cherry){
+        if(i >= grid.length || j >= grid[0].length || grid[i][j] == -1) return;
+        if(i == grid.length-1 && j == grid[0].length-1){
+            solve2(grid,i,j,cherry);  // bottom to up count cherry
+            return;
+        }
+        int curCherry = grid[i][j];
+        grid[i][j] = 0;
+        solve(grid,i,j+1,curCherry + cherry);
+        solve(grid,i+1,j,curCherry + cherry);
+        grid[i][j] = curCherry;
+    }
+    public int cherryPickup(int[][] grid) {
+        if(grid.length == 0) return 0;
+        if(grid.length == 1 && grid[0].length == 1) return grid[0][0];
+        solve(grid,0,0,0);   // top to bottom count cherry
+        return maxCherry;
+    }
+}
