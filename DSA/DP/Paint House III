@@ -1,0 +1,35 @@
+class Solution {
+    Integer[][][] dp;
+    public int solve(int[] houses, int[][] cost, int m, int n, int target, int i, int preCol, int neigh){
+        if(neigh > target) return Integer.MAX_VALUE/2;
+        if(i >= m){
+            return neigh == target ? 0 : Integer.MAX_VALUE/2;
+        }
+        if(dp[i][preCol][neigh] != null) return dp[i][preCol][neigh];
+
+        int res = Integer.MAX_VALUE/2;
+        if(houses[i] != 0){
+            int newNeigh = neigh;
+            if(houses[i] != preCol){
+                newNeigh+=1;
+            } 
+            res = Math.min(res,solve(houses, cost, m, n, target, i+1, houses[i], newNeigh));
+        }else{
+            
+            for(int col=1; col<=n; col++){
+                int newNeigh = neigh;
+                if(preCol != col) newNeigh += 1;
+                int ans = solve(houses,cost,m,n,target,i+1,col,newNeigh)+cost[i][col-1];
+                if(ans != Integer.MAX_VALUE){
+                    res = Math.min(res,ans);
+                }
+            }       
+        }
+        return dp[i][preCol][neigh] = res;
+    }
+    public int minCost(int[] houses, int[][] cost, int m, int n, int target) {
+        dp = new Integer[m][n+1][target+1];
+        int res = solve(houses,cost,m,n,target,0,0,0);
+        return res >= Integer.MAX_VALUE/2 ? -1 : res;
+    }
+}
