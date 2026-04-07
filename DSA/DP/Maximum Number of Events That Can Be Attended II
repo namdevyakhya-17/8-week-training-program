@@ -1,0 +1,37 @@
+class Solution {
+    public int bs(int[][] events, int cur){
+        int low = 0;
+        int high = cur-1;
+        int ans = -1;
+        while(low <= high){
+            int mid = (low+high)/2;
+            if(events[mid][1] < events[cur][0]){
+                ans = mid;
+                low = mid+1;
+            }else{
+                high = mid-1;
+            }
+        }
+        return ans;
+    }
+    public int maxValue(int[][] events, int k) {
+        Arrays.sort(events, (a,b)-> Integer.compare(a[1],b[1]));
+        int n = events.length;
+        int[][] dp = new int[n][k+1];
+        for(int i=0; i<n; i++){
+            for(int j=1; j<=k; j++){
+                int include = events[i][2];
+                int last = bs(events,i);
+                if(last != -1){
+                    include += dp[last][j-1];
+                }
+
+                int exclude = (i>0) ? dp[i-1][j] : 0;
+                dp[i][j] = Math.max(include, exclude);
+            }
+            
+        }
+
+        return dp[n-1][k];
+    }
+}
