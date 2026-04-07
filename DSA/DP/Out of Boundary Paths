@@ -1,0 +1,45 @@
+class Solution {
+    int mod = 1000000007;
+    public int solve(int m, int n, int curMove, int maxMove, int i, int j){
+        if(curMove > maxMove) return 0;
+        if(i<0 || j<0 || i>=m || j>=n){
+            return curMove <= maxMove ? 1 : 0;
+        }
+
+        int rMove = solve(m,n,curMove+1,maxMove,i,j+1)%mod;
+        int lMove = solve(m,n,curMove+1,maxMove,i,j-1)%mod;
+        int uMove = solve(m,n,curMove+1,maxMove,i-1,j)%mod;
+        int dMove = solve(m,n,curMove+1,maxMove,i+1,j)%mod;
+
+        return (rMove + lMove + uMove + dMove)%mod;
+    }
+    public int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+        return solve(m,n,0,maxMove, startRow,startColumn);
+    }
+}
+
+// optimised
+class Solution {
+    int mod = 1000000007;
+    Integer[][][] dp;
+    public int solve(int m, int n, int curMove, int maxMove, int i, int j){
+        if(curMove > maxMove) return 0;
+        if(i<0 || j<0 || i>=m || j>=n){
+            return curMove <= maxMove ? 1 : 0;
+        }
+        if(dp[i][j][curMove] != null) return dp[i][j][curMove];
+
+        int rMove = solve(m,n,curMove+1,maxMove,i,j+1)%mod;
+        int lMove = solve(m,n,curMove+1,maxMove,i,j-1)%mod;
+        int uMove = solve(m,n,curMove+1,maxMove,i-1,j)%mod;
+        int dMove = solve(m,n,curMove+1,maxMove,i+1,j)%mod;
+
+        return dp[i][j][curMove] = ((rMove + lMove)%mod + (uMove + dMove)%mod)%mod;
+    }
+    public int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+        dp = new Integer[m][n][maxMove+1];
+        return solve(m,n,0,maxMove, startRow,startColumn);
+    }
+}
+
+// 
