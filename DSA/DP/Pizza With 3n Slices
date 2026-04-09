@@ -1,0 +1,29 @@
+class Solution {
+    // Similar to house robber 2
+    public int maxSizeSlices(int[] slices) {
+        int n = slices.length;
+        int k = n/3;
+        int[][] dp1 = new int[n][k+1];
+        for(int[] row: dp1){
+            Arrays.fill(row, -1);
+        }
+        int[][] dp2 = new int[n][k+1];
+        for(int[] row: dp2){
+            Arrays.fill(row, -1);
+        }
+
+        int case1 = solve(0,n-1,slices,0,dp1,k);  // if taking 1st slice, can't take last one(already picked)
+        int case2 = solve(1,n,slices,1,dp2,k);  // if taking last slices, can't take first one(already picked);
+        return Math.max(case1, case2);
+    }
+
+    public int solve(int st, int end, int[] slices, int idx, int[][] dp, int k){
+        if(k == 0) return 0;
+        if(idx >= end) return Integer.MIN_VALUE/2;
+        if(dp[idx][k] != -1) return dp[idx][k];
+
+        int take = slices[idx] + solve(st,end,slices,idx+2,dp,k-1);
+        int notake = solve(st, end, slices, idx+1, dp, k);
+        return dp[idx][k] = Math.max(take, notake);
+    }
+}
