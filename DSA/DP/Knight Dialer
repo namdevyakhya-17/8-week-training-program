@@ -1,0 +1,63 @@
+class Solution {
+    List<List<Integer>> info;
+    Integer[][] dp;
+    int mod = 1000000007;
+    public int dfs(int n, int num){
+        if(n == 0) return 1;
+        if(dp[num][n] != null) return dp[num][n];
+
+        int count = 0;
+        for(int v : info.get(num)){
+            count = (count+dfs(n - 1, v))%mod;
+        }
+        return dp[num][n] = count%mod;
+    }
+
+    public int knightDialer(int n) {
+        if(n == 1) return 10;
+        info = new ArrayList<>();
+        for(int i = 0; i <= 9; i++){
+            info.add(new ArrayList<>());
+        }
+
+        info.get(0).add(4);
+        info.get(0).add(6);
+
+        info.get(1).add(6);
+        info.get(1).add(8);
+
+        info.get(2).add(7);
+        info.get(2).add(9);
+
+        info.get(3).add(4);
+        info.get(3).add(8);
+
+        info.get(4).add(0);
+        info.get(4).add(3);
+        info.get(4).add(9);
+
+        info.get(6).add(0);
+        info.get(6).add(1);
+        info.get(6).add(7);
+
+        info.get(7).add(2);
+        info.get(7).add(6);
+
+        info.get(8).add(1);
+        info.get(8).add(3);
+
+        info.get(9).add(2);
+        info.get(9).add(4);
+
+        int count = 0;
+        for(int i = 0; i <= 9; i++){
+            dp = new Integer[10][n+1];
+            for(int j=0; j<10; j++){
+                dp[j][1] = 1;
+            }
+            count = (count+dfs(n, i))%mod;
+        }
+
+        return count;
+    }
+}
