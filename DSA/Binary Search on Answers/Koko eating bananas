@@ -1,0 +1,33 @@
+class Solution {
+    public boolean isPossible(int mid, int h, int[] piles){
+        long time = 0;
+        for(int i = 0; i < piles.length; i++){
+            time += (piles[i] + mid - 1) / mid;  
+        }
+        return time <= h;
+    }
+
+    public int minEatingSpeed(int[] piles, int h) {
+        int low = 1;  // min. bananas koko can eat in one-hour
+        int high = 1; // max. bananas koko can eat in one-hour i.e. max(piles)
+
+        for(int i = 0; i < piles.length; i++){
+            high = Math.max(high, piles[i]);
+        }
+
+        int ans = high;
+
+        while(low <= high){
+            int mid = low + (high - low) / 2;
+
+            if(isPossible(mid, h, piles)){
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+}
