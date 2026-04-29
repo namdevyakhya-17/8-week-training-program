@@ -1,0 +1,36 @@
+class Solution {
+    public boolean isPossible(int mid, int[] weights, int days){
+        int need = 1;
+        int sum = 0;
+        for(int i=0; i<weights.length; i++){
+            sum += weights[i];
+            if(sum > mid){
+                sum = weights[i];
+                need++;
+            }
+        }
+
+        return need <= days;
+    }
+    public int shipWithinDays(int[] weights, int days) {
+        int low = 1;  // min. capacity of ship (max. weight of packages);
+        int high = 0;  // max. capacity of ship could be to load all packages at once (sum of all)
+        for(int i=0; i<weights.length; i++){
+            low = Math.max(low, weights[i]);
+            high += weights[i];
+        }
+
+        int ans = high;
+        while(low <= high){
+            int mid = low + (high - low)/2;
+            if(isPossible(mid,weights,days)){
+                ans = mid;
+                high = mid-1;
+            }else{
+                low = mid+1;
+            }
+        }
+
+        return ans;
+    }
+}
