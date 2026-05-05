@@ -1,0 +1,40 @@
+class Solution {
+    public int minTime(int[] arr, int k) {
+        int min = Integer.MIN_VALUE;
+        int max = 0;
+        for(int num: arr){
+            min = Math.max(min, num);
+            max += num;
+        }
+        
+        int time = findTime(arr, min, max, k);
+        return time;
+    }
+    
+    public int findTime(int[] arr, int min, int max, int k){
+        int mid = (min+max)/2;
+        int time = max;
+        
+        while(min <= max){
+            mid = (min+max)/2;
+            int painter = 1;
+            int tempT = 0;
+            for(int i=0; i<arr.length; i++){
+                tempT += arr[i];
+                if(tempT > mid){
+                    painter++;
+                    tempT = arr[i];
+                }
+            }
+            if(painter <= k){
+                time = Math.min(time, mid);
+                max = mid-1;
+            }else{
+                min = mid+1;
+            }
+        }
+        
+        return time;
+    }
+    
+}
